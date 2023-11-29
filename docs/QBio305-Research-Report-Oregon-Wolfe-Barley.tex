@@ -1,0 +1,105 @@
+\documentclass[
+11pt,
+fleqn,
+titlepage]{article}
+
+% Packages
+
+\usepackage[sfdefault]{roboto}
+\usepackage{authblk}
+\usepackage[a4paper, headheight=14pt]{geometry}
+\usepackage[document]{ragged2e}
+\usepackage{parskip}
+\usepackage{enumitem}
+\usepackage[section]{placeins}
+\usepackage{siunitx}
+\usepackage{textgreek}
+\usepackage[version=4]{mhchem}
+\usepackage[babel, tracking, verbose]{microtype}
+\usepackage[defaultlines=2, all]{nowidow}
+\usepackage{subcaption}
+\captionsetup{
+    labelfont=bf,
+    singlelinecheck=false,
+    justification=RaggedRight}
+\captionsetup[subfigure]{
+    labelformat=brace}
+\renewcommand\thesubfigure{\roman{subfigure}}
+\usepackage{polyglossia}
+\setdefaultlanguage[variant=american]{english}
+\usepackage{csquotes}
+\usepackage[style=apa]{biblatex}
+\addbibresource{bibliography.bib}
+\usepackage{fancyhdr}
+\usepackage{booktabs}
+\usepackage{soul}
+\usepackage[labelfont=bf]{caption}
+\usepackage{tabularx}
+\usepackage{threeparttablex}
+\usepackage[imakeidx]{xindex}
+\makeindex[intoc]
+\usepackage[pdfa]{hyperref}
+\usepackage{colorprofiles}
+\hypersetup{
+    pdfinfo={
+        Title={Genetic analysis of phenotypic variation measured in the Oregon Wolfe Barley collection},
+        Author={Halide Aydin, Aliz Fodor, Alessia Russo, Ingo Giebel},
+        Subject={Research project QBio305: Population and Quantitative Genetics},
+        Keywords={Heinrich-Heine-Universität Düsseldorf, WS 2023/2024, QBio305: Population and Quantitative Genetics, Research project, Genetic analysis of phenotypic variation, Oregon Wolfe Barley collection, Instructors: Prof. Dr. Maria von Korff Schmising, Dr. Timo Hellwig, Dr. Agatha Walla}},
+        colorlinks,
+        linkcolor=blue,
+        linktoc=all}
+\usepackage[ocgcolorlinks, tikz]{ocgx2}
+\usepackage{biocon}
+\newbact{Ec}{genus=Escherichia, epithet=coli}
+\sloppy
+
+% Header
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{Genetic analysis of phenotypic variation measured in the Oregon Wolfe Barley collection}
+\fancyhead[R]{\thepage}
+\fancypagestyle{plain}{}
+
+% Title & author
+
+\title{Genetic analysis of phenotypic variation measured in the Oregon Wolfe Barley collection}
+\author{Halide Aydin, Aliz Fodor, Alessia Russo, Ingo Giebel}
+\affil{Institute of Plant Genetics}
+\affil{Heinrich-Heine-Universität Düsseldorf}
+\affil{QBio305: Population and Quantitative Genetics}
+\affil{Prof. Dr. Maria von Korff Schmising, Dr. Timo Hellwig, Dr. Agatha Walla}
+\date{December 22, 2023}
+
+\begin{document}
+    \maketitle
+
+    \tableofcontents
+
+    \clearpage
+    \renewcommand*\listtablename{List of tables}
+    \listoftables
+    \renewcommand*\listfigurename{List of figures}
+    \listoffigures
+
+    \clearpage
+
+    \input{introduction}
+
+    \input{materials_and_methods}
+
+    \input{results_and_discussion}
+
+    \clearpage
+    \printbibliography[heading=bibintoc]
+
+    \clearpage
+    \appendix
+    \input{appendix_a}
+    \input{appendix_b}
+    \input{appendix_c}
+
+    \clearpage
+    \printindex
+\end{document}

@@ -1,0 +1,283 @@
+% $ biblatex auxiliary file $
+% $ biblatex bbl format version 3.2 $
+% Do not modify the above lines!
+%
+% This is an auxiliary file used by the 'biblatex' package.
+% This file may safely be deleted. It will be recreated by
+% biber as required.
+%
+\begingroup
+\makeatletter
+\@ifundefined{ver@biblatex.sty}
+  {\@latex@error
+     {Missing 'biblatex' package}
+     {The bibliography requires the 'biblatex' package.}
+      \aftergroup\endinput}
+  {}
+\endgroup
+
+
+\refsection{0}
+  \datalist[entry]{apa/apasortcite//global/global}
+    \entry{doi:10.1007/s001220100622}{article}{}
+      \name{author}{15}{}{%
+        {{un=0,uniquepart=base,hash=42a7f8ab1f73b9285908f98a1eb521ef}{%
+           family={Costa},
+           familyi={C\bibinitperiod},
+           given={J.\bibnamedelimi M.},
+           giveni={J\bibinitperiod\bibinitdelim M\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=b109a26bceb05871276c40f011150d10}{%
+           family={Corey},
+           familyi={C\bibinitperiod},
+           given={A.},
+           giveni={A\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=b8fec93a374f9ee9b6fc0a8ec93818ea}{%
+           family={Hayes},
+           familyi={H\bibinitperiod},
+           given={P.\bibnamedelimi M.},
+           giveni={P\bibinitperiod\bibinitdelim M\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=3dff9b538264d52a001ccc4b011bb966}{%
+           family={Jobet},
+           familyi={J\bibinitperiod},
+           given={C.},
+           giveni={C\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=8db005ed018be5a3f2c2629161de4337}{%
+           family={Kleinhofs},
+           familyi={K\bibinitperiod},
+           given={A.},
+           giveni={A\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=7758941b56dc111a06bdc1175c7f3706}{%
+           family={Kopisch-Obusch},
+           familyi={K\bibinithyphendelim O\bibinitperiod},
+           given={A.},
+           giveni={A\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=51f0e80e55f0bb1a267b360e4112f54c}{%
+           family={Kramer},
+           familyi={K\bibinitperiod},
+           given={S.\bibnamedelimi F.},
+           giveni={S\bibinitperiod\bibinitdelim F\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=4f0ccf11ecb0abd99188ca7999f0768b}{%
+           family={Kudrna},
+           familyi={K\bibinitperiod},
+           given={D.},
+           giveni={D\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=32ecf3b8563f881c200eaaf65381ff0d}{%
+           family={Li},
+           familyi={L\bibinitperiod},
+           given={M.},
+           giveni={M\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=6ac5ee35e18f933d6d999ee606ff3098}{%
+           family={Riera-Lizarazu},
+           familyi={R\bibinithyphendelim L\bibinitperiod},
+           given={O.},
+           giveni={O\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=12890334c80c7cbdaa3f73092f894147}{%
+           family={Sato},
+           familyi={S\bibinitperiod},
+           given={K.},
+           giveni={K\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=2f5769229704516f4056ef0ba789c0ec}{%
+           family={Szucs},
+           familyi={S\bibinitperiod},
+           given={P.},
+           giveni={P\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=bfcb69490e49772a6794173cfb48e182}{%
+           family={Toojinda},
+           familyi={T\bibinitperiod},
+           given={T.},
+           giveni={T\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=9aef968f18e97cbb17d7b06b3712b6b9}{%
+           family={Vales},
+           familyi={V\bibinitperiod},
+           given={M.\bibnamedelimi I.},
+           giveni={M\bibinitperiod\bibinitdelim I\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=0626413d7b4ce1c913e7f902b4bd72ce}{%
+           family={Wolfe},
+           familyi={W\bibinitperiod},
+           given={R.\bibnamedelimi I.},
+           giveni={R\bibinitperiod\bibinitdelim I\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{language}{1}{%
+        {English (US)}%
+      }
+      \strng{namehash}{0630c543ef9a711d9161c89bc1b53af2}
+      \strng{fullhash}{6ad0770976ab621785a06d3e76d69076}
+      \strng{bibnamehash}{6ad0770976ab621785a06d3e76d69076}
+      \strng{authorbibnamehash}{6ad0770976ab621785a06d3e76d69076}
+      \strng{authornamehash}{0630c543ef9a711d9161c89bc1b53af2}
+      \strng{authorfullhash}{6ad0770976ab621785a06d3e76d69076}
+      \field{sortinit}{C}
+      \field{sortinithash}{4d103a86280481745c9c897c925753c0}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{A phenotypically polymorphic barley (Hordeum vulgare L.) mapping population was developed using morphological marker stocks as parents. Ninety-four doubled-haploid lines were derived for genetic mapping from an F1 using the Hordeum bulbosum system. A linkage map was constructed using 12 morphological markers, 87 restriction fragment length polymorphism (RFLP), five random amplified polymorphic DNA (RAPD), one sequence-tagged site (STS), one intron fragment length polymorphism (IFLP), 33 simple sequence repeat (SSR), and 586 amplified fragment length polymorphism (AFLP) markers. The genetic map spanned 1,387 cM with an average density of one marker every 1.9 cM. AFLP markers tended to cluster on centromeric regions and were more abundant on chromosome 1 (7H). RAPD markers showed a high level of segregation distortion, 54\% compared with the 26\% observed for AFLP markers, 27\% for SSR markers, and 18\% for RFLP markers. Three major regions of segregation distortion, based on RFLP and morphological markers, were located on chromosomes 2 (2H), 3 (3H), and 7 (5H). Segregation distortion may indicate that preferential gametic selection occurred during the development of the doubled-haploid lines. This may be due to the extreme phenotypes determined by alleles at morphological trait loci of the dominant and recessive parental stocks. Several molecular markers were found to be closely linked to morphological loci. The linkage map reported herein will be useful in integrating data on quantitative traits with morphological variants and should aid in map-based cloning of genes controlling morphological traits.}
+      \field{journaltitle}{Theoretical and Applied Genetics}
+      \field{number}{2-3}
+      \field{title}{Molecular mapping of the Oregon Wolfe Barleys: A phenotypically polymorphic doubled-haploid population}
+      \field{volume}{103}
+      \field{year}{2001}
+      \field{pages}{415\bibrangedash 424}
+      \range{pages}{10}
+      \verb{doi}
+      \verb 10.1007/s001220100622
+      \endverb
+      \verb{urlraw}
+      \verb https://doi.org/10.1007/s001220100622
+      \endverb
+      \verb{url}
+      \verb https://doi.org/10.1007/s001220100622
+      \endverb
+      \keyw{Barley,Genetic map,Molecular markers,Morphological markers,Segregation distortion}
+    \endentry
+  \enddatalist
+  \datalist[entry]{apa/global//global/global}
+    \entry{doi:10.1007/s001220100622}{article}{}
+      \name{author}{15}{}{%
+        {{un=0,uniquepart=base,hash=42a7f8ab1f73b9285908f98a1eb521ef}{%
+           family={Costa},
+           familyi={C\bibinitperiod},
+           given={J.\bibnamedelimi M.},
+           giveni={J\bibinitperiod\bibinitdelim M\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=b109a26bceb05871276c40f011150d10}{%
+           family={Corey},
+           familyi={C\bibinitperiod},
+           given={A.},
+           giveni={A\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=b8fec93a374f9ee9b6fc0a8ec93818ea}{%
+           family={Hayes},
+           familyi={H\bibinitperiod},
+           given={P.\bibnamedelimi M.},
+           giveni={P\bibinitperiod\bibinitdelim M\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=3dff9b538264d52a001ccc4b011bb966}{%
+           family={Jobet},
+           familyi={J\bibinitperiod},
+           given={C.},
+           giveni={C\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=8db005ed018be5a3f2c2629161de4337}{%
+           family={Kleinhofs},
+           familyi={K\bibinitperiod},
+           given={A.},
+           giveni={A\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=7758941b56dc111a06bdc1175c7f3706}{%
+           family={Kopisch-Obusch},
+           familyi={K\bibinithyphendelim O\bibinitperiod},
+           given={A.},
+           giveni={A\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=51f0e80e55f0bb1a267b360e4112f54c}{%
+           family={Kramer},
+           familyi={K\bibinitperiod},
+           given={S.\bibnamedelimi F.},
+           giveni={S\bibinitperiod\bibinitdelim F\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=4f0ccf11ecb0abd99188ca7999f0768b}{%
+           family={Kudrna},
+           familyi={K\bibinitperiod},
+           given={D.},
+           giveni={D\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=32ecf3b8563f881c200eaaf65381ff0d}{%
+           family={Li},
+           familyi={L\bibinitperiod},
+           given={M.},
+           giveni={M\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=6ac5ee35e18f933d6d999ee606ff3098}{%
+           family={Riera-Lizarazu},
+           familyi={R\bibinithyphendelim L\bibinitperiod},
+           given={O.},
+           giveni={O\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=12890334c80c7cbdaa3f73092f894147}{%
+           family={Sato},
+           familyi={S\bibinitperiod},
+           given={K.},
+           giveni={K\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=2f5769229704516f4056ef0ba789c0ec}{%
+           family={Szucs},
+           familyi={S\bibinitperiod},
+           given={P.},
+           giveni={P\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=bfcb69490e49772a6794173cfb48e182}{%
+           family={Toojinda},
+           familyi={T\bibinitperiod},
+           given={T.},
+           giveni={T\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=9aef968f18e97cbb17d7b06b3712b6b9}{%
+           family={Vales},
+           familyi={V\bibinitperiod},
+           given={M.\bibnamedelimi I.},
+           giveni={M\bibinitperiod\bibinitdelim I\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=0626413d7b4ce1c913e7f902b4bd72ce}{%
+           family={Wolfe},
+           familyi={W\bibinitperiod},
+           given={R.\bibnamedelimi I.},
+           giveni={R\bibinitperiod\bibinitdelim I\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{language}{1}{%
+        {English (US)}%
+      }
+      \strng{namehash}{0630c543ef9a711d9161c89bc1b53af2}
+      \strng{fullhash}{6ad0770976ab621785a06d3e76d69076}
+      \strng{bibnamehash}{6ad0770976ab621785a06d3e76d69076}
+      \strng{authorbibnamehash}{6ad0770976ab621785a06d3e76d69076}
+      \strng{authornamehash}{0630c543ef9a711d9161c89bc1b53af2}
+      \strng{authorfullhash}{6ad0770976ab621785a06d3e76d69076}
+      \field{sortinit}{C}
+      \field{sortinithash}{4d103a86280481745c9c897c925753c0}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{A phenotypically polymorphic barley (Hordeum vulgare L.) mapping population was developed using morphological marker stocks as parents. Ninety-four doubled-haploid lines were derived for genetic mapping from an F1 using the Hordeum bulbosum system. A linkage map was constructed using 12 morphological markers, 87 restriction fragment length polymorphism (RFLP), five random amplified polymorphic DNA (RAPD), one sequence-tagged site (STS), one intron fragment length polymorphism (IFLP), 33 simple sequence repeat (SSR), and 586 amplified fragment length polymorphism (AFLP) markers. The genetic map spanned 1,387 cM with an average density of one marker every 1.9 cM. AFLP markers tended to cluster on centromeric regions and were more abundant on chromosome 1 (7H). RAPD markers showed a high level of segregation distortion, 54\% compared with the 26\% observed for AFLP markers, 27\% for SSR markers, and 18\% for RFLP markers. Three major regions of segregation distortion, based on RFLP and morphological markers, were located on chromosomes 2 (2H), 3 (3H), and 7 (5H). Segregation distortion may indicate that preferential gametic selection occurred during the development of the doubled-haploid lines. This may be due to the extreme phenotypes determined by alleles at morphological trait loci of the dominant and recessive parental stocks. Several molecular markers were found to be closely linked to morphological loci. The linkage map reported herein will be useful in integrating data on quantitative traits with morphological variants and should aid in map-based cloning of genes controlling morphological traits.}
+      \field{journaltitle}{Theoretical and Applied Genetics}
+      \field{number}{2-3}
+      \field{title}{Molecular mapping of the Oregon Wolfe Barleys: A phenotypically polymorphic doubled-haploid population}
+      \field{volume}{103}
+      \field{year}{2001}
+      \field{pages}{415\bibrangedash 424}
+      \range{pages}{10}
+      \verb{doi}
+      \verb 10.1007/s001220100622
+      \endverb
+      \verb{urlraw}
+      \verb https://doi.org/10.1007/s001220100622
+      \endverb
+      \verb{url}
+      \verb https://doi.org/10.1007/s001220100622
+      \endverb
+      \keyw{Barley,Genetic map,Molecular markers,Morphological markers,Segregation distortion}
+    \endentry
+  \enddatalist
+\endrefsection
+\endinput
+
