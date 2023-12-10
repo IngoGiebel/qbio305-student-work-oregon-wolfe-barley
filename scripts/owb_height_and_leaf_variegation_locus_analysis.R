@@ -87,7 +87,7 @@ car::qqPlot(height_raw_aov$residuals, envelope = FALSE)
 hist(dta_quant_raw$Height)
 
 # Check for homoscedasticity and outliers
-plot(height_raw_aov$residuals, which = 1)
+plot(height_raw_aov$residuals)
 
 # Conclusion: There are two greater outliers (in the genotypes OWB33 and OWB76).
 
@@ -130,7 +130,7 @@ car::qqPlot(height_clean_aov$residuals, envelope = FALSE)
 
 # Check normality and homoscedasticity again
 shapiro.test(height_clean_aov$residuals)
-plot(height_clean_aov$residuals, which = 1)
+plot(height_clean_aov$residuals)
 
 # Check the ANOVA table
 summary(height_clean_aov)
