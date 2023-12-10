@@ -6,3 +6,8 @@ docs/*
 !*.tex
 !*.md
 !*.pdf
+# All RStudio project files
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
