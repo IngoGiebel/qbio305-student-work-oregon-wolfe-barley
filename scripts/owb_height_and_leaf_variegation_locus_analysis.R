@@ -122,7 +122,7 @@ car::leveneTest(Height ~ Genotype, data = dta_quant_raw)
 # the test assumptions.
 
 
-# ANOVA - Check the normality assumption ------------------------
+# ANOVA - Check the normality assumption ----------------------------------
 
 # Plot a histogram of the residuals
 ggplot2::ggplot(
