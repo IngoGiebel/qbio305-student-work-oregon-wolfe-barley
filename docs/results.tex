@@ -10,6 +10,26 @@ To investigate the association between the height of the plants and their genoty
     \label{fig:raw_genotype_height}
 \end{figure}
 
+\subsection{ANOVA homogeneity of variance assumption}
+
+ANOVA assumes that the data are normally distributed and that the variance across the groups is approximately equal. These assumptions were assessed with some diagnostic plots and tests. Figure \ref{fig:raw_aov_height_residuals_vs_fit} shows the ANOVA residuals (raw data) versus the fitted values. This plot clearly shows three outliers (in the genotypes OWB33, OWB76, and OWB54) which were later removed in the cleansed data because they severely affected the normality of the variance.
+
+\begin{figure}[htbp]
+    \includesvg[width=\linewidth]{../results/raw_aov_height_residuals_vs_fit}
+    \caption{ANOVA residuals vs fitted values. Used for visual assessment of the homogeneity of variance assumption and to identify any outliers.}
+    \label{fig:raw_aov_height_residuals_vs_fit}
+\end{figure}
+
+Furthermore, a Levene's test for homogeneity of variance was done. The p-value for that test was \num{0.7938}, which means that the variances across the groups were not significantly different from each other, i.e., the homogeneity assumption of the variance was met.
+
+\subsection{ANOVA normality of variance assumption}
+
+The normality of variance was assessed for both the raw data and the cleansed data in which the three most extreme outliers were removed.
+
+
+
+
+
 
 Show the ANOVA table and an overview of the linkage and QTL plots you have generated in this course with the code you have used.
 

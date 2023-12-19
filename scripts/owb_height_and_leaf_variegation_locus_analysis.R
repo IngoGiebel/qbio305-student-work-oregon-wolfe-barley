@@ -100,9 +100,9 @@ summary(height_raw_aov)
 
 # ANOVA - Check the homogeneity of variance assumption --------------------
 
-# The ANOVA test assumes that, the data are normally distributed and the
-# variance across groups are homogeneous. This is assessed with some
-# diagnostic plots and tests.
+# ANOVA assumes that the data are normally distributed and that the
+# variance across the groups is approximately equal. These assumptions
+# are assessed with some diagnostic plots and tests.
 
 # Plot the residuals vs fit in order to check the homogeneity of variance
 # assumption
