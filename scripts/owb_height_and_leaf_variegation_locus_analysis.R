@@ -255,9 +255,9 @@ marker_pval_manhattan_plot_df <- marker_pval_df |>
   dplyr::mutate(SNP = 1:n(), .before = pval) |>
   dplyr::select(CHR, BP, SNP, pval)
 
-# Calculate the negative logarithm of the Bonferroni corrected significance
-# threshold. The Bonferroni correction adjusts the chosen significance level
-# (here 5 %) by dividing it by the number of tests.
+# Calculate the Bonferroni corrected significance threshold. The Bonferroni
+# correction adjusts the chosen significance level (here 5 %) by dividing it
+# by the number of tests.
 sig_thld_bonfcorr <- 0.05 / nrow(marker_pval_df)
 
 # Manhattan plot of the genome-wide p-values for the markers
