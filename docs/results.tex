@@ -1,6 +1,6 @@
 \section{Results}
 
-\subsection{Analysis of variance for the genotype effect on the plant height}
+\subsection{ANOVA for the genotype effect on the plant height}
 
 To investigate the association between the height of the plants and their genotype, we conducted a single-factor analysis of variance (ANOVA). The analysis revealed a highly significant impact of the genotype on the plant height (p-value < \num{2e-16} for both the raw and the cleansed data in which three outliers were removed). As the corresponding F-value for the cleansed data (\num{834.4}) is substantially greater than the corresponding F-value for the raw data (\num{198.1}), the actual p-value for the cleansed data is actually even much smaller than the p-value for the raw data. Figure \ref{fig:raw_genotype_height} shows density plots of the raw height data for the different genotypes.
 
@@ -12,7 +12,7 @@ To investigate the association between the height of the plants and their genoty
 
 \subsection{ANOVA homogeneity of variance assumption}
 
-ANOVA assumes that the data are normally distributed and that the variance across the groups is approximately equal. These assumptions were assessed with some diagnostic plots and tests. Figure \ref{fig:raw_aov_height_residuals_vs_fit} shows the ANOVA residuals (raw data) versus the fitted values. This plot clearly shows three outliers (in the genotypes OWB33, OWB76, and OWB54) which were later removed in the cleansed data because they severely affected the normality of the variance.
+ANOVA assumes that the data are normally distributed and that the variance across the groups is approximately equal. These assumptions were assessed with some diagnostic plots and statistical tests. Figure \ref{fig:raw_aov_height_residuals_vs_fit} shows the ANOVA residuals (raw data) versus the fitted values. This plot clearly shows three outliers (in the genotypes OWB33, OWB76, and OWB54) which were later removed in the cleansed data because they severely affected the normality of the variance.
 
 \begin{figure}[htbp]
     \includesvg[width=\linewidth]{../results/raw_aov_height_residuals_vs_fit}
@@ -77,7 +77,7 @@ Furthermore, a Shapiro-Wilk test for normality was done for both the raw and the
 
 In order to assess the impact of the genetic markers on the plant height, an ANOVA was done for all markers. Our chosen significance threshold of \qty{5}{\percent} was Bonferroni corrected by dividing the threshold by the number of tests.
 
-The ANOVAs showed that the plant height is mainly effected by a genomic region within gene 2H. But there are also markers within the genes 1H, 3H, 5H, and 6H which have a significant impact on the plant height. Figure \ref{fig:clean_height_marker_effects_manhattan} illustrates the impacts of the genetic markers on the plant height.
+The ANOVAs showed that the plant height is mainly affected by a genomic region within gene 2H. But there are also markers within the genes 1H, 3H, 5H, and 6H which have a significant impact on the plant height. Figure \ref{fig:clean_height_marker_effects_manhattan} illustrates the impacts of the genetic markers on the plant height.
 
 \begin{figure}[htbp]
     \includesvg[width=\linewidth]{../results/clean_height_marker_effects_manhattan}
