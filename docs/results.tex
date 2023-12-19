@@ -24,10 +24,54 @@ Furthermore, a Levene's test for homogeneity of variance was done. The p-value f
 
 \subsection{ANOVA normality of variance assumption}
 
-The normality of variance was assessed for both the raw data and the cleansed data in which the three most extreme outliers were removed.
+The normality of variance was assessed for both the raw data and the cleansed data in which the three most extreme outliers were removed. Figures \ref{fig:aov_height_residuals_histogram}, \ref{fig:aov_height_residuals_qq}, and \ref{fig:aov_height_residuals_cooks_dist} show a visual comparison of the raw and the cleansed data: a histogram of the ANOVA residuals, a Q-Q plot of the ANOVA residuals, and a Cook's distance plot of the ANOVA residuals, respectively.
 
+Furthermore, a Shapiro-Wilk test for normality was done for both the raw and the cleansed data. According to the p-values of the Shapiro-Wilk test (raw data < \num{2.2e-16}, cleansed data \num{7.823e-14}), both the raw and the cleansed data was not normally distributed in a narrow sense. Nevertheless, the plots reveal that the data conform at least roughly to a normal distribution, in particular the cleansed data without the three most extreme outliers.
 
+\begin{figure}[htbp]
+    \begin{subfigure}[t]{.48\textwidth}
+        \includesvg[width=\linewidth]{../results/raw_aov_height_residuals_histogram}
+        \caption{Raw data}
+        \label{fig:raw_aov_height_residuals_histogram}
+    \end{subfigure}
+    \begin{subfigure}[t]{.48\textwidth}
+        \includesvg[width=\linewidth]{../results/clean_aov_height_residuals_histogram}
+        \caption{Cleansed data}
+        \label{fig:clean_aov_height_residuals_histogram}
+    \end{subfigure}
+    \caption{Histogram of the ANOVA residuals}
+    \label{fig:aov_height_residuals_histogram}
+\end{figure}
 
+\begin{figure}[htbp]
+    \begin{subfigure}[t]{.48\textwidth}
+        \includesvg[width=\linewidth]{../results/raw_aov_height_residuals_qq}
+        \caption{Raw data}
+        \label{fig:raw_aov_height_residuals_qq}
+    \end{subfigure}
+    \begin{subfigure}[t]{.48\textwidth}
+        \includesvg[width=\linewidth]{../results/clean_aov_height_residuals_qq}
+        \caption{Cleansed data}
+        \label{fig:clean_aov_height_residuals_qq}
+    \end{subfigure}
+    \caption{Q-Q plot of the ANOVA residuals}
+    \label{fig:aov_height_residuals_qq}
+\end{figure}
+
+\begin{figure}[htbp]
+    \begin{subfigure}[t]{.48\textwidth}
+        \includesvg[width=\linewidth]{../results/raw_aov_height_residuals_cooks_dist}
+        \caption{Raw data}
+        \label{fig:raw_aov_height_residuals_cooks_dist}
+    \end{subfigure}
+    \begin{subfigure}[t]{.48\textwidth}
+        \includesvg[width=\linewidth]{../results/clean_aov_height_residuals_cooks_dist}
+        \caption{Cleansed data}
+        \label{fig:clean_aov_height_residuals_cooks_dist}
+    \end{subfigure}
+    \caption{Cook's distance plot of the ANOVA residuals}
+    \label{fig:aov_height_residuals_cooks_dist}
+\end{figure}
 
 
 
