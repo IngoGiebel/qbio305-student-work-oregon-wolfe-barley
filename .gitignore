@@ -11,3 +11,5 @@ docs/*
 .Rhistory
 .RData
 .Ruserdata
+# svg-inkscape dirs
+svg-inkscape/
