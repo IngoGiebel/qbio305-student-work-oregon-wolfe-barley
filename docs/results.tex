@@ -73,26 +73,17 @@ Furthermore, a Shapiro-Wilk test for normality was done for both the raw and the
     \label{fig:aov_height_residuals_cooks_dist}
 \end{figure}
 
+\subsection{QTL analysis of plant height}
 
+In order to assess the impact of the genetic markers on the plant height, an ANOVA was done for all markers. Our chosen significance threshold of \qty{5}{\percent} was Bonferroni corrected by dividing the threshold by the number of tests.
 
-Show the ANOVA table and an overview of the linkage and QTL plots you have generated in this course with the code you have used.
+The ANOVAs showed that the plant height is mainly effected by a genomic region within gene 2H. But there are also markers within the genes 1H, 3H, 5H, and 6H which have a significant impact on the plant height. Figure \ref{fig:clean_height_marker_effects_manhattan} illustrates the impacts of the genetic markers on the plant height.
 
-What are your major findings?
+\begin{figure}[htbp]
+    \includesvg[width=\linewidth]{../results/clean_height_marker_effects_manhattan}
+    \caption{Manhattan plot of the genome-wide p-values for the genetic markers}
+    \label{fig:clean_height_marker_effects_manhattan}
+\end{figure}
 
-Are your traits in proximity to any of the following known genes and if so, can they explain your trait?
+\subsection{Genetic linkage mapping of the leaf variegation trait}
 
-Locus Chromosome References:
-
-VRS1 2H \url{https://doi.org/10.3390/ijms23042276}
-
-ZEO1 2H \url{https://doi.org/10.1242/dev.170373}
-
-Kap 4H \url{https://doi.org/10.1038/374727a0}
-
-LKS2 7H \url{https://doi.org/10.1093/jxb/ers182}
-
-Gpa1 2H \url{https://doi.org/10.1186/s12870-021-02915-9}
-
-Nud 7H \url{https://doi.org/10.1073/pnas.0711034105}
-
-Blp1 1H \url{https://doi.org/10.3389/fpls.2017.01414}
