@@ -48,7 +48,7 @@ plot_residuals_hist <- function(data_aov, xlab) {
     mapping = ggplot2::aes(x = res),
   ) +
     ggplot2::geom_histogram(
-      mapping = ggplot2::aes(y = ..density..),
+      mapping = ggplot2::aes(y = ggplot2::after_stat(width * density)),
       color = "darkgrey",
       bins = 50
     ) +
@@ -98,7 +98,6 @@ anova_all_markers <- function(data, genetic_map, phenotype, marker_names) {
 # Map the qualitative marker to the most likely locus responsible for the trait.
 # The given linkage map is updated accordingly.
 map_qualt_trait <- function(linkage_map, phenotype) {
-
   # Try all possible positions for a marker, keeping all other markers fixed,
   # and evaluate the log likelihood and estimate the chromosome length
   lod_scores <- qtl::tryallpositions(
@@ -125,9 +124,10 @@ map_qualt_trait <- function(linkage_map, phenotype) {
 # Load the raw data -------------------------------------------------------
 
 # Read in the raw quantitative data of the different OWB genotypes
-dta_quant_raw <- car::strings2factors(readr::read_csv(
-  dta_owb_height_and_spike_length_by_genotype_file_path
-))
+dta_quant_raw <- car::strings2factors(
+  readr::read_csv(dta_owb_height_and_spike_length_by_genotype_file_path),
+  verbose = FALSE
+)
 
 # Read in the genetic map of OWB
 dta_owb_genetic_map <- readr::read_csv(
