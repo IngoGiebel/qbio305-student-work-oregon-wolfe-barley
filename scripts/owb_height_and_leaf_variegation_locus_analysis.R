@@ -35,6 +35,67 @@ dta_owb_linkage_map_qualt_phenotypes_file_path <- here::here(
 options(scipen = 1)
 
 
+# Functions ---------------------------------------------------------------
+
+# Plot a histogram of the residuals
+plot_residuals_hist <- function(data_aov, xlab) {
+  res <- data_aov$residuals
+  ggplot2::ggplot(
+    data = data.frame(
+      1:length(res),
+      res
+    ),
+    mapping = ggplot2::aes(x = res),
+  ) +
+    ggplot2::geom_histogram(
+      mapping = ggplot2::aes(y = ..density..),
+      color = "darkgrey",
+      bins = 50
+    ) +
+    ggplot2::stat_function(
+      fun = dnorm,
+      args = list(
+        mean = mean(res),
+        sd = sd(res)
+      ),
+      color = "darkred"
+    ) +
+    ggplot2::labs(
+      x = xlab,
+      y = "Density"
+    )
+}
+
+# Conduct an ANOVA of phenotype ~ marker for each marker within marker_names
+anova_all_markers <- function(data, genetic_map, phenotype, marker_names) {
+  # Tibble for the markers, theirs positions and significance values for the
+  # phenotype
+  marker_pval_df <- tibble::tibble(
+    marker = character(),
+    chr = character(),
+    pos = numeric(),
+    pval = numeric()
+  )
+
+  # Loop through all markers and conduct ANOVAs for each one of them
+  for (marker_name in marker_names) {
+    # Extract the marker's genetic position from the genetic map
+    marker_chr_pos <- dplyr::filter(genetic_map, marker == marker_name)
+    # Conduct an one-way ANOVA of the plant height vs the marker
+    marker_aov <- aov(
+      as.formula(paste(phenotype, "~", marker_name)),
+      data = data
+    )
+    # Extract the marker's p-value from the ANOVA table
+    pval <- summary(marker_aov)[[1]][1, 5]
+    # Add a new row for the marker, its position, and its p-value
+    marker_pval_df <- marker_pval_df |> tibble::add_row(marker_chr_pos, pval)
+  }
+
+  marker_pval_df
+}
+
+
 # Load the raw data -------------------------------------------------------
 
 # Read in the raw quantitative data of the different OWB genotypes
@@ -125,30 +186,7 @@ car::leveneTest(Height ~ Genotype, data = dta_quant_raw)
 # ANOVA - Check the normality assumption ----------------------------------
 
 # Plot a histogram of the residuals
-ggplot2::ggplot(
-  data = data.frame(
-    1:length(height_raw_aov$residuals),
-    height_raw_aov$residuals
-  ),
-  mapping = ggplot2::aes(x = height_raw_aov$residuals),
-) +
-  ggplot2::geom_histogram(
-    mapping = ggplot2::aes(y = ..density..),
-    color = "darkgrey",
-    bins = 50
-  ) +
-  ggplot2::stat_function(
-    fun = dnorm,
-    args = list(
-      mean = mean(height_raw_aov$residuals),
-      sd = sd(height_raw_aov$residuals)
-    ),
-    color = "darkred"
-  ) +
-  ggplot2::labs(
-    x = "Residuals of the ANOVA height ~ genotype",
-    y = "Density"
-  )
+plot_residuals_hist(height_raw_aov, "Residuals of the ANOVA height ~ genotype")
 
 # Q-Q plot of the ANOVA residuals
 plot(height_raw_aov, which = 2)
@@ -179,30 +217,10 @@ height_clean_aov <- aov(Height ~ Genotype, data = dta_quant_clean)
 summary(height_clean_aov)
 
 # Plot a histogram of the residuals
-ggplot2::ggplot(
-  data = data.frame(
-    1:length(height_clean_aov$residuals),
-    height_clean_aov$residuals
-  ),
-  mapping = ggplot2::aes(x = height_clean_aov$residuals),
-) +
-  ggplot2::geom_histogram(
-    mapping = ggplot2::aes(y = ..density..),
-    color = "darkgrey",
-    bins = 50
-  ) +
-  ggplot2::stat_function(
-    fun = dnorm,
-    args = list(
-      mean = mean(height_clean_aov$residuals),
-      sd = sd(height_clean_aov$residuals)
-    ),
-    color = "darkred"
-  ) +
-  ggplot2::labs(
-    x = "Residuals of the ANOVA height ~ genotype",
-    y = "Density"
-  )
+plot_residuals_hist(
+  height_clean_aov,
+  "Residuals of the ANOVA height ~ genotype"
+)
 
 # Q-Q plot of the ANOVA residuals
 plot(height_clean_aov, which = 2)
@@ -224,28 +242,16 @@ shapiro.test(height_clean_aov$residuals)
 
 # ANOVA of the plant height for all markers -------------------------------
 
-# Tibble for the markers, theirs positions and significance values for the
-# plant height
-marker_pval_df <- tibble::tibble(
-  marker = character(),
-  chr = character(),
-  pos = numeric(),
-  pval = numeric())
+marker_pval_df <- anova_all_markers(
+  dta_quant_clean,
+  dta_owb_genetic_map,
+  "Height",
+  colnames(dta_quant_clean)[5:ncol(dta_quant_clean)])
 
-# Loop through all markers and conduct ANOVAs for each one of them
-for (m in 5:ncol(dta_quant_clean)) {
-  marker_name <- colnames(dta_quant_clean)[m]
-  # Extract the marker's genetic position from the genetic map
-  marker_chr_pos <- dplyr::filter(dta_owb_genetic_map, marker == marker_name)
-  # Conduct an one-way ANOVA of the plant height vs the marker
-  marker_aov <- aov(
-    as.formula(paste("Height", "~", marker_name)),
-    data = dta_quant_clean)
-  # Extract the marker's p-value from the ANOVA table
-  pval <- summary(marker_aov)[[1]][1, 5]
-  # Add a new row for the marker, its position, and its p-value
-  marker_pval_df <- marker_pval_df |> tibble::add_row(marker_chr_pos, pval)
-}
+# Calculate the Bonferroni corrected significance threshold. The Bonferroni
+# correction adjusts the chosen significance level (here 5 %) by dividing it
+# by the number of tests.
+sig_thld_bonfcorr <- 0.05 / nrow(marker_pval_df)
 
 # Create a data frame that follows the requirements of the
 # Manhattan command of the qqman library
@@ -255,11 +261,6 @@ marker_pval_manhattan_plot_df <- marker_pval_df |>
   dplyr::mutate(SNP = 1:n(), .before = pval) |>
   dplyr::select(CHR, BP, SNP, pval)
 
-# Calculate the Bonferroni corrected significance threshold. The Bonferroni
-# correction adjusts the chosen significance level (here 5 %) by dividing it
-# by the number of tests.
-sig_thld_bonfcorr <- 0.05 / nrow(marker_pval_df)
-
 # Manhattan plot of the genome-wide p-values for the markers
 qqman::manhattan(
   marker_pval_manhattan_plot_df,
@@ -268,8 +269,7 @@ qqman::manhattan(
   logp = TRUE,
   p = "pval",
   lwd = 3,
-  ylab = "p-value (neg. log)",
-  main = "Marker effect on the plant height"
+  ylab = "p-value (neg. log)"
 )
 
 # Determine all gene positions which have p-value less than the Bonferroni
@@ -285,6 +285,7 @@ marker_pval_sig_df <- marker_pval_df |>
     "Min. chr position" = min(pos),
     "Max. chr position" = max(pos)
   )
+marker_pval_sig_df
 
 # Result:
 
@@ -330,7 +331,7 @@ dta_linkage_map_qualt_phenotypes <- qtl::movemarker(
   newpos = 192.8
 )
 
-# Update the linkage map plot
+# Plot the updated linkage map
 qtl::plotMap(
   dta_linkage_map_qualt_phenotypes,
   main = "",
