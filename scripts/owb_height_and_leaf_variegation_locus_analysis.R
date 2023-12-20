@@ -95,29 +95,30 @@ anova_all_markers <- function(data, genetic_map, phenotype, marker_names) {
   marker_pval_df
 }
 
-# Map the qualitative marker to the most likely locus responsible for the trait.
-# The given linkage map is updated accordingly.
-map_qualt_trait <- function(linkage_map, phenotype) {
-  # Try all possible positions for a marker, keeping all other markers fixed,
+# Determine the LOD scores of the given marker for all possible positions
+calc_load_scores <- function(linkage_map, phenotype) {
+  # Try all possible positions for the marker, keeping all other markers fixed,
   # and evaluate the log likelihood and estimate the chromosome length
-  lod_scores <- qtl::tryallpositions(
+  qtl::tryallpositions(
     linkage_map,
     marker = phenotype,
     verbose = FALSE
   )
+}
 
+# Map the qualitative marker to the most likely locus responsible for the trait.
+# Returns an updated linkage map.
+map_qualt_trait <- function(linkage_map, phenotype, lod_scores) {
   # Determine the LOD entry with the highes LOD score
   best_marker_pos <- dplyr::slice_max(lod_scores, n = 1, lod)
 
   # Move the phenotype marker to the position with the highest LOD score
-  dta_linkage_map_qualt_phenotypes <- qtl::movemarker(
+  qtl::movemarker(
     linkage_map,
     marker = phenotype,
     newchr = dplyr::select(best_marker_pos, chr)[1, 1],
     newpos = dplyr::select(best_marker_pos, pos)[1, 1]
   )
-
-  lod_scores
 }
 
 
@@ -231,7 +232,7 @@ shapiro.test(height_raw_aov$residuals)
 # (without the outliers).
 
 
-# ANOVA height vs genotype (cleansed data w/out outliers) -----------------
+# ANOVA plant height vs genotype (cleansed data w/out outliers) -----------
 
 # Remove outliers
 dta_quant_clean <- dta_quant_raw[-c(14, 40, 182), ]
@@ -330,11 +331,22 @@ marker_pval_sig_df
 # the plant height.
 
 
-# Map the leaf variegation traits -----------------------------------------
+# Map the leaf variegation trait ------------------------------------------
+
+# Determine the LOD scores of the leaf variegation for all possible positions
+load_scores <- calc_load_scores(
+  dta_linkage_map_qualt_phenotypes,
+  "leaf_variegation"
+)
+load_scores
 
 # Map the leaf variegation marker to the most likely locus responsible
 # for the trait
-map_qualt_trait(dta_linkage_map_qualt_phenotypes, "leaf_variegation")
+dta_linkage_map_qualt_phenotypes <- map_qualt_trait(
+  dta_linkage_map_qualt_phenotypes,
+  "leaf_variegation",
+  load_scores
+)
 
 # Plot the updated linkage map
 qtl::plotMap(dta_linkage_map_qualt_phenotypes,
