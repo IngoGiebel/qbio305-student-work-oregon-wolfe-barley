@@ -95,6 +95,32 @@ anova_all_markers <- function(data, genetic_map, phenotype, marker_names) {
   marker_pval_df
 }
 
+# Map the qualitative marker to the most likely locus responsible for the trait.
+# The given linkage map is updated accordingly.
+map_qualt_trait <- function(linkage_map, phenotype) {
+
+  # Try all possible positions for a marker, keeping all other markers fixed,
+  # and evaluate the log likelihood and estimate the chromosome length
+  lod_scores <- qtl::tryallpositions(
+    linkage_map,
+    marker = phenotype,
+    verbose = FALSE
+  )
+
+  # Determine the LOD entry with the highes LOD score
+  best_marker_pos <- dplyr::slice_max(lod_scores, n = 1, lod)
+
+  # Move the phenotype marker to the position with the highest LOD score
+  dta_linkage_map_qualt_phenotypes <- qtl::movemarker(
+    linkage_map,
+    marker = phenotype,
+    newchr = dplyr::select(best_marker_pos, chr)[1, 1],
+    newpos = dplyr::select(best_marker_pos, pos)[1, 1]
+  )
+
+  lod_scores
+}
+
 
 # Load the raw data -------------------------------------------------------
 
@@ -246,7 +272,8 @@ marker_pval_df <- anova_all_markers(
   dta_quant_clean,
   dta_owb_genetic_map,
   "Height",
-  colnames(dta_quant_clean)[5:ncol(dta_quant_clean)])
+  colnames(dta_quant_clean)[5:ncol(dta_quant_clean)]
+)
 
 # Calculate the Bonferroni corrected significance threshold. The Bonferroni
 # correction adjusts the chosen significance level (here 5 %) by dividing it
@@ -303,37 +330,14 @@ marker_pval_sig_df
 # the plant height.
 
 
-# Map the qualitative traits ----------------------------------------------
+# Map the leaf variegation traits -----------------------------------------
 
-# Plot the markers on a linkage map
-qtl::plotMap(
-  dta_linkage_map_qualt_phenotypes,
-  main = "",
-  show.marker.names = TRUE
-)
-
-# Mapping the locus responsible for the leaf variegation
-# To map the locus, calculate all pairwise recombination frequencies
-# and LOD scores
-leaf_variegation <- qtl::tryallpositions(
-  dta_linkage_map_qualt_phenotypes,
-  marker = "leaf_variegation",
-  error.prob = 0
-)
-# Show the best linkage to a marker from each chromosome
-summary(leaf_variegation)
-
-# Move the locus to the best marker position
-dta_linkage_map_qualt_phenotypes <- qtl::movemarker(
-  dta_linkage_map_qualt_phenotypes,
-  marker = "leaf_variegation",
-  newchr = "2H",
-  newpos = 192.8
-)
+# Map the leaf variegation marker to the most likely locus responsible
+# for the trait
+map_qualt_trait(dta_linkage_map_qualt_phenotypes, "leaf_variegation")
 
 # Plot the updated linkage map
-qtl::plotMap(
-  dta_linkage_map_qualt_phenotypes,
+qtl::plotMap(dta_linkage_map_qualt_phenotypes,
   main = "",
   show.marker.names = TRUE
 )
