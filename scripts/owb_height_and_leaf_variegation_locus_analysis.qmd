@@ -1,10 +1,18 @@
 ---
 title: "QBio305 - Genetic analysis of phenotypic variation measured in the Oregon Wolfe Barley collection"
 author: "Ingo Giebel"
-format: html
-   toc: true
-server: shiny
+format:
+  html:
+    self-contained: true
+    cache: true
+execute:
+  freeze: auto
+editor: visual
 ---
+
+# R Packages and options
+
+## Load the required packages
 
 ```{r}
 #| label: load-packages
@@ -21,6 +29,19 @@ library(car)
 # For linkage analysis
 library(qtl)
 ```
+
+## Set R option for scientific notation
+
+```{r}
+#| label: r-options
+#| echo: false
+
+options(scipen = 1)
+```
+
+# Data import
+
+## Define the file paths
 
 ```{r}
 #| label: file-paths
@@ -42,12 +63,34 @@ dta_owb_linkage_map_qualt_phenotypes_file_path <- here::here(
 )
 ```
 
+## Read in the data
+
 ```{r}
-#| label: r-options
+#| label: read-data
 #| echo: false
 
-options(scipen = 1)
+# Read in the raw quantitative data of the different OWB genotypes
+dta_quant_raw <- car::strings2factors(
+  readr::read_csv(dta_owb_height_and_spike_length_by_genotype_file_path),
+  verbose = FALSE
+)
+
+# Read in the genetic map of OWB
+dta_owb_genetic_map <- readr::read_csv(
+  dta_owb_genetic_map_file_path
+)
+
+# Read in linkage map and qualitative phenotypes as denoted in marker annotation
+dta_linkage_map_qualt_phenotypes <- qtl::read.cross(
+  format = "csv",
+  file = dta_owb_linkage_map_qualt_phenotypes_file_path,
+  genotypes = c("a", "b"),
+  alleles = c("a", "b"),
+  crosstype = "dh"
+)
 ```
+
+# Function definitions
 
 ```{r}
 #| label: func-defs
@@ -138,30 +181,9 @@ map_qualt_trait <- function(linkage_map, phenotype, lod_scores) {
 }
 ```
 
-```{r}
-#| label: read-data
-#| echo: false
+# Analyses for plant height
 
-# Read in the raw quantitative data of the different OWB genotypes
-dta_quant_raw <- car::strings2factors(
-  readr::read_csv(dta_owb_height_and_spike_length_by_genotype_file_path),
-  verbose = FALSE
-)
-
-# Read in the genetic map of OWB
-dta_owb_genetic_map <- readr::read_csv(
-  dta_owb_genetic_map_file_path
-)
-
-# Read in linkage map and qualitative phenotypes as denoted in marker annotation
-dta_linkage_map_qualt_phenotypes <- qtl::read.cross(
-  format = "csv",
-  file = dta_owb_linkage_map_qualt_phenotypes_file_path,
-  genotypes = c("a", "b"),
-  alleles = c("a", "b"),
-  crosstype = "dh"
-)
-```
+## ANOVA height \~ genotype
 
 ```{r}
 #| label: anova-raw-height-genotype
@@ -206,6 +228,8 @@ summary(height_raw_aov)
 # (p-value < 2e-16).
 ```
 
+## Check the homogeneity of the raw data
+
 ```{r}
 #| label: anova-raw-check-homogeneity-variance
 #| echo: true
@@ -232,6 +256,8 @@ car::leveneTest(Height ~ Genotype, data = dta_quant_raw)
 # the test assumptions.
 ```
 
+## Check the normality of the raw data
+
 ```{r}
 #| label: anova-raw-check-normality
 #| echo: true
@@ -255,6 +281,8 @@ shapiro.test(height_raw_aov$residuals)
 # Therefore, the further analysis will be done using ANOVA with cleansed data
 # (without the outliers).
 ```
+
+## Cleanse the data
 
 ```{r}
 #| label: anova-clean-height-genotype
@@ -292,6 +320,8 @@ shapiro.test(height_clean_aov$residuals)
 # Nevertheless, the plots reveal that the data conform at least roughly to a
 # normal distribution, in particular without the removed three outliers.
 ```
+
+## QTL analysis of plant height
 
 ```{r}
 #| label: anova-clean-height-markers
@@ -358,6 +388,8 @@ marker_pval_sig_df
 # the genes 1H, 3H, 5H, and 6H which have a significant impact on
 # the plant height.
 ```
+
+# Genetic linkage mapping of the leaf variegation trait
 
 ```{r}
 #| label: map-leaf-variegation-trait
