@@ -4,7 +4,15 @@ author: "Ingo Giebel"
 format:
   html:
     self-contained: true
+    theme: cyborg
+    toc: true
     cache: true
+knitr:
+  opts_chunk:
+    warning: false
+    message: false
+    code-fold: show
+    code-overflow: wrap
 execute:
   freeze: auto
 editor: visual
@@ -15,8 +23,7 @@ editor: visual
 ## Load the required packages
 
 ```{r}
-#| label: load-packages
-#| echo: false
+#| output: false
 
 # For determining the project root
 library(here)
@@ -33,8 +40,7 @@ library(qtl)
 ## Set R option for scientific notation
 
 ```{r}
-#| label: r-options
-#| echo: false
+#| output: false
 
 options(scipen = 1)
 ```
@@ -44,8 +50,7 @@ options(scipen = 1)
 ## Define the file paths
 
 ```{r}
-#| label: file-paths
-#| echo: false
+#| output: false
 
 dta_owb_genetic_map_file_path <- here::here(
   "data",
@@ -66,8 +71,7 @@ dta_owb_linkage_map_qualt_phenotypes_file_path <- here::here(
 ## Read in the data
 
 ```{r}
-#| label: read-data
-#| echo: false
+#| output: false
 
 # Read in the raw quantitative data of the different OWB genotypes
 dta_quant_raw <- car::strings2factors(
@@ -80,7 +84,8 @@ dta_owb_genetic_map <- readr::read_csv(
   dta_owb_genetic_map_file_path
 )
 
-# Read in linkage map and qualitative phenotypes as denoted in marker annotation
+# Read in linkage map and qualitative phenotypes as denoted in
+# marker annotation
 dta_linkage_map_qualt_phenotypes <- qtl::read.cross(
   format = "csv",
   file = dta_owb_linkage_map_qualt_phenotypes_file_path,
@@ -90,12 +95,11 @@ dta_linkage_map_qualt_phenotypes <- qtl::read.cross(
 )
 ```
 
-# Function definitions
+# Analyses for plant height
+
+## Function definitions
 
 ```{r}
-#| label: func-defs
-#| echo: false
-
 # Plot a histogram of the residuals
 plot_residuals_hist <- function(data_aov, xlab) {
   res <- data_aov$residuals
@@ -140,7 +144,7 @@ anova_all_markers <- function(data, genetic_map, phenotype, marker_names) {
   for (marker_name in marker_names) {
     # Extract the marker's genetic position from the genetic map
     marker_chr_pos <- dplyr::filter(genetic_map, marker == marker_name)
-    # Conduct an one-way ANOVA of the plant height vs the marker
+    # Conduct an one-way ANOVA of the phenotype vs the marker
     marker_aov <- aov(
       as.formula(paste(phenotype, "~", marker_name)),
       data = data
@@ -148,47 +152,18 @@ anova_all_markers <- function(data, genetic_map, phenotype, marker_names) {
     # Extract the marker's p-value from the ANOVA table
     pval <- summary(marker_aov)[[1]][1, 5]
     # Add a new row for the marker, its position, and its p-value
-    marker_pval_df <- marker_pval_df |> tibble::add_row(marker_chr_pos, pval)
+    marker_pval_df <-
+      marker_pval_df |>
+      tibble::add_row(marker_chr_pos, pval)
   }
 
   marker_pval_df
 }
-
-# Determine the LOD scores of the given marker for all possible positions
-calc_load_scores <- function(linkage_map, phenotype) {
-  # Try all possible positions for the marker, keeping all other markers
-  # fixed, and evaluate the log likelihood and estimate the chromosome length
-  qtl::tryallpositions(
-    linkage_map,
-    marker = phenotype,
-    verbose = FALSE
-  )
-}
-
-# Map the qualitative marker to the most likely locus responsible for
-# the trait. Returns an updated linkage map.
-map_qualt_trait <- function(linkage_map, phenotype, lod_scores) {
-  # Determine the LOD entry with the highes LOD score
-  best_marker_pos <- dplyr::slice_max(lod_scores, n = 1, lod)
-
-  # Move the phenotype marker to the position with the highest LOD score
-  qtl::movemarker(
-    linkage_map,
-    marker = phenotype,
-    newchr = dplyr::select(best_marker_pos, chr)[1, 1],
-    newpos = dplyr::select(best_marker_pos, pos)[1, 1]
-  )
-}
 ```
-
-# Analyses for plant height
 
 ## ANOVA height \~ genotype
 
 ```{r}
-#| label: anova-raw-height-genotype
-#| echo: true
-
 # Densitiy plot comparing the height of the different genotypes
 ggpubr::ggdensity(
   data = dta_quant_raw,
@@ -223,17 +198,13 @@ height_raw_aov <- aov(Height ~ Genotype, data = dta_quant_raw)
 
 # Summary of the ANOVA analysis
 summary(height_raw_aov)
-
-# Conclusion: The genotype has a significant effect on the plant height
-# (p-value < 2e-16).
 ```
+
+**Conclusion:** The genotype has a significant effect on the plant height (p-value \< $2 \times 10^{-16}$).
 
 ## Check the homogeneity of the raw data
 
 ```{r}
-#| label: anova-raw-check-homogeneity-variance
-#| echo: true
-
 # ANOVA assumes that the data are normally distributed and that the
 # variance across the groups is approximately equal. These assumptions
 # are assessed with some diagnostic plots and tests.
@@ -244,24 +215,15 @@ plot(height_raw_aov, which = 1)
 
 # Levene's test for homogeneity of variance across groups
 car::leveneTest(Height ~ Genotype, data = dta_quant_raw)
-
-# Conclusion: the variances are roughly homogeneous. The p-value for the
-# Levene's test of the raw data is 0.7938. This means that the variances
-# within the groups are not significantly different from each other, i.e.,
-# the homogeneity assumption of the variance is met.
-
-# Outliers: the rows 14, 40, and 182 are detected as outliers, which can
-# severely affect normality and homogeneity of the variance. Therefore, these
-# outliers (in the genotypes OWB33, OWB76, and OWB54) will be removed to meet
-# the test assumptions.
 ```
+
+**Conclusion:** The variances are roughly homogeneous. The p-value for the Levene's test of the raw data is 0.7938. This means that the variances within the groups are not significantly different from each other, i.e., the homogeneity assumption of the variance is met.
+
+**Outliers:** The rows 14, 40, and 182 are detected as outliers, which can severely affect normality and homogeneity of the variance. Therefore, these outliers (in the genotypes OWB33, OWB76, and OWB54) will be removed to meet the test assumptions.
 
 ## Check the normality of the raw data
 
 ```{r}
-#| label: anova-raw-check-normality
-#| echo: true
-
 # Plot a histogram of the residuals
 plot_residuals_hist(height_raw_aov, "Residuals of the ANOVA height ~ genotype")
 
@@ -273,21 +235,13 @@ plot(height_raw_aov, which = 4)
 
 # Shapiro-Wilk test for normality
 shapiro.test(height_raw_aov$residuals)
-
-# Conclusion: According to the Shapiro-Wilk test for normality, it is unlikely
-# that the raw data is normally distributed (p-values < 2.2e-16). Nevertheless,
-# the plots reveal that the data conform at least roughly to a normal
-# distribution, in particular without the three outliers.
-# Therefore, the further analysis will be done using ANOVA with cleansed data
-# (without the outliers).
 ```
+
+**Conclusion:** According to the Shapiro-Wilk test for normality, it is unlikely that the raw data is normally distributed (p-values \< $2.2 \times 10^{-16}$). Nevertheless, the plots reveal that the data conform at least roughly to a normal distribution, in particular without the three outliers. Therefore, the further analysis will be done using ANOVA with cleansed data (without the outliers).
 
 ## Cleanse the data
 
 ```{r}
-#| label: anova-clean-height-genotype
-#| echo: true
-
 # Remove outliers
 dta_quant_clean <- dta_quant_raw[-c(14, 40, 182), ]
 
@@ -311,22 +265,13 @@ plot(height_clean_aov, which = 4)
 
 # Shapiro-Wilk test for normality
 shapiro.test(height_clean_aov$residuals)
-
-# p-value = 7.823e-14
-# Still very unlikely, but much more likely than for the raw data.
-
-# Conclusion: According to the Shapiro-Wilk test for normality, it is still
-# unlikely that the cleansed data is normally distributed (p-value = 7.823e-14).
-# Nevertheless, the plots reveal that the data conform at least roughly to a
-# normal distribution, in particular without the removed three outliers.
 ```
+
+**Conclusion:** According to the Shapiro-Wilk test for normality, it is still unlikely that the cleansed data is normally distributed (p-value = $7.823 \times 10^{-14}$). Nevertheless, the plots reveal that the data conform at least roughly to a normal distribution, in particular without the removed three outliers.
 
 ## QTL analysis of plant height
 
 ```{r}
-#| label: anova-clean-height-markers
-#| echo: true
-
 marker_pval_df <- anova_all_markers(
   dta_quant_clean,
   dta_owb_genetic_map,
@@ -391,10 +336,37 @@ marker_pval_sig_df
 
 # Genetic linkage mapping of the leaf variegation trait
 
-```{r}
-#| label: map-leaf-variegation-trait
-#| echo: true
+## Function definitions
 
+```{r}
+# Determine the LOD scores of the given marker for all possible positions
+calc_load_scores <- function(linkage_map, phenotype) {
+  # Try all possible positions for the marker, keeping all other markers
+  # fixed, and evaluate the log likelihood and estimate the chromosome length
+  qtl::tryallpositions(
+    linkage_map,
+    marker = phenotype,
+    verbose = FALSE
+  )
+}
+
+# Map the qualitative marker to the most likely locus responsible for
+# the trait. Returns an updated linkage map.
+map_qualt_trait <- function(linkage_map, phenotype, lod_scores) {
+  # Determine the LOD entry with the highes LOD score
+  best_marker_pos <- dplyr::slice_max(lod_scores, n = 1, lod)
+
+  # Move the phenotype marker to the position with the highest LOD score
+  qtl::movemarker(
+    linkage_map,
+    marker = phenotype,
+    newchr = dplyr::select(best_marker_pos, chr)[1, 1],
+    newpos = dplyr::select(best_marker_pos, pos)[1, 1]
+  )
+}
+```
+
+```{r}
 # Determine the LOD scores of the leaf variegation for all possible positions
 load_scores <- calc_load_scores(
   dta_linkage_map_qualt_phenotypes,

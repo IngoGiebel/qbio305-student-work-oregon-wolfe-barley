@@ -81,7 +81,7 @@ anova_all_markers <- function(data, genetic_map, phenotype, marker_names) {
   for (marker_name in marker_names) {
     # Extract the marker's genetic position from the genetic map
     marker_chr_pos <- dplyr::filter(genetic_map, marker == marker_name)
-    # Conduct an one-way ANOVA of the plant height vs the marker
+    # Conduct an one-way ANOVA of the phenotype vs the marker
     marker_aov <- aov(
       as.formula(paste(phenotype, "~", marker_name)),
       data = data
