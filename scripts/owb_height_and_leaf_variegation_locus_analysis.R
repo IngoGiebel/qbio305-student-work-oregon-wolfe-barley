@@ -12,6 +12,11 @@ library(car)
 library(qtl)
 
 
+# Set R options -----------------------------------------------------------
+
+options(scipen = 1)
+
+
 # File paths --------------------------------------------------------------
 
 dta_owb_genetic_map_file_path <- here::here(
@@ -28,11 +33,6 @@ dta_owb_linkage_map_qualt_phenotypes_file_path <- here::here(
   "data",
   "dta_owb_linkage_map_qualt_phenotypes.csv"
 )
-
-
-# Set R options -----------------------------------------------------------
-
-options(scipen = 1)
 
 
 # Functions ---------------------------------------------------------------
