@@ -15,6 +15,7 @@ library(qtl)
 # Set R options -----------------------------------------------------------
 
 options(scipen = 1)
+options(pillar.sigfig = 4)
 
 
 # File paths --------------------------------------------------------------
@@ -300,33 +301,34 @@ qqman::manhattan(
   ylab = "p-value (neg. log)"
 )
 
-# Determine all gene positions which have p-value less than the Bonferroni
-# corrected p-value
+# Determine all gene positions which have p-value less than the
+# Bonferroni corrected p-value
 marker_pval_sig_df <- marker_pval_df |>
   dplyr::filter(pval < sig_thld_bonfcorr) |>
-  dplyr::rename(Chromosome = chr) |>
-  dplyr::group_by(Chromosome) |>
+  dplyr::rename(Chr = chr) |>
+  dplyr::group_by(Chr) |>
   dplyr::summarise(
     Count = n(),
-    "Min. p-value" = min(pval),
-    "Median p-value" = median(pval),
-    "Min. chr position" = min(pos),
-    "Max. chr position" = max(pos)
+    "Min p-val" = min(pval),
+    "Median p-val" = median(pval),
+    "Min pos" = min(pos),
+    "Max pos" = max(pos)
   )
 marker_pval_sig_df
 
+
 # Result:
 
-# Chr. | Count | Min. p-val | Median p-val | Min. chr pos | Max. chr pos
-
-# 1H      37     1.74e- 7     4.24e- 6       52.7           157.
-# 2H     180     1.10e-42     1.82e-14       1.26           187.
-# 3H      68     5.43e- 8     2.57e- 6       58.6           146.
-# 5H      38     1.48e- 8     4.45e- 7       137.           238.
-# 6H       1     6.37e- 6     6.37e- 6       129.           129.
+# Chr   Count   Min p-val   Median p-val   Min pos    Max pos
+# ===========================================================
+# 1H       37   1.740e- 7      4.238e- 6     52.67      157.1
+# 2H      180   1.105e-42      1.817e-14      1.26      186.6
+# 3H       68   5.427e- 8      2.568e- 6     58.63      146.3
+# 5H       38   1.476e- 8      4.450e- 7    136.6       237.8
+# 6H        1   6.366e- 6      6.366e- 6    128.8       128.8
 
 # Conclusion: The plant height is mainly significantly effected by
-# a genomic region within gene 2. But there are also markers within
+# a genomic region within gene 2H. But there are also markers within
 # the genes 1H, 3H, 5H, and 6H which have a significant impact on
 # the plant height.
 
@@ -338,7 +340,7 @@ load_scores <- calc_load_scores(
   dta_linkage_map_qualt_phenotypes,
   "leaf_variegation"
 )
-load_scores
+tibble::as_tibble(summary(load_scores))
 
 # Map the leaf variegation marker to the most likely locus responsible
 # for the trait

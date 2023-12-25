@@ -7,6 +7,8 @@ format:
     theme: cyborg
     toc: true
     cache: true
+    fig-width: 9.5
+    fig-height: 6.5
 knitr:
   opts_chunk:
     warning: false
@@ -43,6 +45,7 @@ library(qtl)
 #| output: false
 
 options(scipen = 1)
+options(pillar.sigfig = 4)
 ```
 
 # Data import
@@ -225,7 +228,9 @@ car::leveneTest(Height ~ Genotype, data = dta_quant_raw)
 
 ```{r}
 # Plot a histogram of the residuals
-plot_residuals_hist(height_raw_aov, "Residuals of the ANOVA height ~ genotype")
+plot_residuals_hist(
+  height_raw_aov,
+  "Residuals of the ANOVA height ~ genotype")
 
 # Q-Q plot of the ANOVA residuals
 plot(height_raw_aov, which = 2)
@@ -250,19 +255,36 @@ height_clean_aov <- aov(Height ~ Genotype, data = dta_quant_clean)
 
 # Summary of the ANOVA analysis
 summary(height_clean_aov)
+```
+
+```{r} 
+#| label: fig-clean_aov_height_residuals_histogram
+#| fig-cap: "Histogram of the ANOVA residuals - clean data"
 
 # Plot a histogram of the residuals
 plot_residuals_hist(
   height_clean_aov,
   "Residuals of the ANOVA height ~ genotype"
 )
+```
+
+```{r} 
+#| label: fig-clean_aov_height_residuals_qq
+#| fig-cap: "Q-Q plot of the ANOVA residuals - clean data"
 
 # Q-Q plot of the ANOVA residuals
 plot(height_clean_aov, which = 2)
+```
+
+```{r} 
+#| label: fig-clean_aov_height_residuals_cooks_dist
+#| fig-cap: "Cook's distance plot of the ANOVA residuals - clean data"
 
 # Cook's distance plot
 plot(height_clean_aov, which = 4)
+```
 
+```{r}
 # Shapiro-Wilk test for normality
 shapiro.test(height_clean_aov$residuals)
 ```
@@ -272,6 +294,9 @@ shapiro.test(height_clean_aov$residuals)
 ## QTL analysis of plant height
 
 ```{r}
+#| label: fig-clean_height_marker_effects_manhattan
+#| fig-cap: "Manhattan plot of the genome-wide p-values for the genetic markers"
+
 marker_pval_df <- anova_all_markers(
   dta_quant_clean,
   dta_owb_genetic_map,
@@ -302,37 +327,26 @@ qqman::manhattan(
   lwd = 3,
   ylab = "p-value (neg. log)"
 )
+```
 
-# Determine all gene positions which have p-value less than the Bonferroni
-# corrected p-value
+```{r}
+# Determine all gene positions which have p-value less than the
+# Bonferroni corrected p-value
 marker_pval_sig_df <- marker_pval_df |>
   dplyr::filter(pval < sig_thld_bonfcorr) |>
-  dplyr::rename(Chromosome = chr) |>
-  dplyr::group_by(Chromosome) |>
+  dplyr::rename(Chr = chr) |>
+  dplyr::group_by(Chr) |>
   dplyr::summarise(
     Count = n(),
-    "Min. p-value" = min(pval),
-    "Median p-value" = median(pval),
-    "Min. chr position" = min(pos),
-    "Max. chr position" = max(pos)
+    "Min p-val" = min(pval),
+    "Median p-val" = median(pval),
+    "Min pos" = min(pos),
+    "Max pos" = max(pos)
   )
 marker_pval_sig_df
-
-# Result:
-
-# Chr. | Count | Min. p-val | Median p-val | Min. chr pos | Max. chr pos
-
-# 1H      37     1.74e- 7     4.24e- 6       52.7           157.
-# 2H     180     1.10e-42     1.82e-14       1.26           187.
-# 3H      68     5.43e- 8     2.57e- 6       58.6           146.
-# 5H      38     1.48e- 8     4.45e- 7       137.           238.
-# 6H       1     6.37e- 6     6.37e- 6       129.           129.
-
-# Conclusion: The plant height is mainly significantly effected by
-# a genomic region within gene 2. But there are also markers within
-# the genes 1H, 3H, 5H, and 6H which have a significant impact on
-# the plant height.
 ```
+
+**Conclusion:** The plant height is mainly significantly effected by a genomic region within gene 2H. But there are also markers within the genes 1H, 3H, 5H, and 6H which have a significant impact on the plant height.
 
 # Genetic linkage mapping of the leaf variegation trait
 
@@ -366,13 +380,22 @@ map_qualt_trait <- function(linkage_map, phenotype, lod_scores) {
 }
 ```
 
+## Calculate the LOD scores
+
 ```{r}
 # Determine the LOD scores of the leaf variegation for all possible positions
 load_scores <- calc_load_scores(
   dta_linkage_map_qualt_phenotypes,
   "leaf_variegation"
 )
-load_scores
+tibble::as_tibble(summary(load_scores))
+```
+
+## Leaf variegation mapping
+
+```{r}
+#| label: fig-link_map_leaf_variegation
+#| fig-cap: "Genetic linkage mapping of the leaf variegation trait leaf_var (moved to the position with the highest LOD score of 3.83)"
 
 # Map the leaf variegation marker to the most likely locus responsible
 # for the trait
@@ -387,17 +410,8 @@ qtl::plotMap(dta_linkage_map_qualt_phenotypes,
   main = "",
   show.marker.names = TRUE
 )
-
-# Conclusion: The leaf variegation of the Oregon Wolfe barley collection
-# is significantly effected by the chromosome 2H at position 192.8.
-
-# Remark: According to
-#
-# https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8066651/
-#
-# the leaf variegation is controlled by the gene Wst. Therefore, our findings
-# are in accordance with the findings of that paper.
-# See figure
-# https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8066651/figure/plants-10-00694-f003/
-# for an illustration of the Wst locus in gene 2H.
 ```
+
+**Conclusion:** The leaf variegation of the Oregon Wolfe barley collection is significantly effected by the chromosome 2H at position 192.8.
+
+**Remark:** According to <https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8066651/> the leaf variegation is controlled by the gene Wst. Therefore, our findings are in accordance with the findings of that paper. See figure <https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8066651/figure/plants-10-00694-f003/> for an illustration of the Wst locus in gene 2H.
