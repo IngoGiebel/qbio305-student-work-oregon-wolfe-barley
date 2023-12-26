@@ -2,13 +2,15 @@
 title: "QBio305 - Genetic analysis of phenotypic variation measured in the Oregon Wolfe Barley collection"
 author: "Ingo Giebel"
 format:
-  html:
+  html5:
     self-contained: true
     theme: cyborg
     toc: true
-    cache: true
+    code-link: true
     fig-width: 9.5
     fig-height: 6.5
+    html-math-method: mathjax
+    cache: true
 knitr:
   opts_chunk:
     warning: false
@@ -257,7 +259,7 @@ height_clean_aov <- aov(Height ~ Genotype, data = dta_quant_clean)
 summary(height_clean_aov)
 ```
 
-```{r} 
+```{r}
 #| label: fig-clean_aov_height_residuals_histogram
 #| fig-cap: "Histogram of the ANOVA residuals - clean data"
 
@@ -268,7 +270,7 @@ plot_residuals_hist(
 )
 ```
 
-```{r} 
+```{r}
 #| label: fig-clean_aov_height_residuals_qq
 #| fig-cap: "Q-Q plot of the ANOVA residuals - clean data"
 
@@ -276,7 +278,7 @@ plot_residuals_hist(
 plot(height_clean_aov, which = 2)
 ```
 
-```{r} 
+```{r}
 #| label: fig-clean_aov_height_residuals_cooks_dist
 #| fig-cap: "Cook's distance plot of the ANOVA residuals - clean data"
 
@@ -289,7 +291,7 @@ plot(height_clean_aov, which = 4)
 shapiro.test(height_clean_aov$residuals)
 ```
 
-**Conclusion:** According to the Shapiro-Wilk test for normality, it is still unlikely that the cleansed data is normally distributed (p-value = $7.823 \times 10^{-14}$). Nevertheless, the plots reveal that the data conform at least roughly to a normal distribution, in particular without the removed three outliers.
+**Conclusion:** According to the Shapiro-Wilk test for normality, it is still unlikely that the cleansed data is normally distributed (p-value = $7.823 \times 10^{-14}$. Nevertheless, the plots reveal that the data conform at least roughly to a normal distribution, in particular without the removed three outliers.
 
 ## QTL analysis of plant height
 
