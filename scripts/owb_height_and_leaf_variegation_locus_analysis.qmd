@@ -5,13 +5,21 @@ date: today
 lang: en-US
 title-block-banner: true
 format:
-  html5+lhs:
+  html:
     self-contained: true
     self-contained-math: true
     resource-path: [., .., ../docs, ../results]
-    theme: cyborg
+    theme:
+      light: flatly
+      dark: darkly
+    grid:
+      sidebar-width: 500px
+    page-layout: full
+    number-sections: true
     toc: true
+    toc-expand: 2
     code-tools: true
+    toc-location: left
     code-link: true
     fig-format: retina
     fig-responsive: true
