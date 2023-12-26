@@ -1,26 +1,41 @@
 ---
 title: "QBio305 - Genetic analysis of phenotypic variation measured in the Oregon Wolfe Barley collection"
 author: "Ingo Giebel"
+date: today
+lang: en-US
+title-block-banner: true
 format:
-  html5:
+  html5+lhs:
     self-contained: true
+    self-contained-math: true
+    resource-path: [., .., ../docs, ../results]
     theme: cyborg
     toc: true
+    code-tools: true
     code-link: true
+    fig-format: retina
+    fig-responsive: true
     fig-width: 9.5
     fig-height: 6.5
     html-math-method: mathjax
+    smooth-scroll: true
+    bibliography: bibliography.bib
+    csl: apa
     cache: true
 knitr:
   opts_chunk:
     warning: false
     message: false
-    code-fold: show
+    code-fold: true
     code-overflow: wrap
 execute:
   freeze: auto
 editor: visual
 ---
+
+::: {.callout-note appearance="minimal"}
+{{< include ../LICENSE.md >}}
+:::
 
 # R Packages and options
 
@@ -414,6 +429,31 @@ qtl::plotMap(dta_linkage_map_qualt_phenotypes,
 )
 ```
 
-**Conclusion:** The leaf variegation of the Oregon Wolfe barley collection is significantly effected by the chromosome 2H at position 192.8.
+**Conclusion:** The leaf variegation of the Oregon Wolfe barley collection is significantly effected by the chromosome 2H at position 192.8. According to @giménez2021, the leaf variegation is controlled by the gene *Wst*. @fig-gimenez2021-molecular-marker-locations shows their phenotypic trait mapping results, which are in accordance with our findings.
 
-**Remark:** According to <https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8066651/> the leaf variegation is controlled by the gene Wst. Therefore, our findings are in accordance with the findings of that paper. See figure <https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8066651/figure/plants-10-00694-f003/> for an illustration of the Wst locus in gene 2H.
+[![Phenotypic traits mapping of the Oregon Wolfe Barley population. From "An F2 barley population as a tool for teaching mendelian genetics", by Giménez, E., Benavente, E., Pascual, L., García-Sampedro, A., López-Fernández, M., Vázquez, J. F., & Giraldo, P., 2021, Plants, 10(4), p. 694 (https://doi.org/10.3390/plants10040694#sec2-plants-10-00694).](../docs/gimenez2021-fig3.webp){#fig-gimenez2021-molecular-marker-locations}](https://doi.org/10.3390/plants10040694#sec2-plants-10-00694)
+
+# References {.unnumbered}
+
+::: {#refs}
+:::
+
+# Appendix: R packages version info {.unnumbered}
+
+::: {#r_pkg_version_info .callout-note collapse="true" appearance="minimal"}
+## R session info with information on the R version as well as the packages that were loaded
+
+```{r}
+#| message: true
+#| code-fold: false
+
+message(paste(capture.output(sessionInfo()), "\n", collapse = ""))
+```
+:::
+
+# Appendix: All code for this report {.unnumbered}
+
+```{r ref.label=knitr::all_labels()}
+#| label: fig-r_code
+#| eval: false
+```
