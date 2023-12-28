@@ -17,11 +17,14 @@ format:
     page-layout: full
     number-sections: true
     toc: true
+    toc-location: left
     toc-expand: 2
     code-tools: true
-    toc-location: left
     code-link: true
+    code-fold: true
+    code-overflow: wrap
     fig-format: retina
+    fig-align: left
     fig-responsive: true
     fig-width: 9.5
     fig-height: 6.5
@@ -34,8 +37,6 @@ knitr:
   opts_chunk:
     warning: false
     message: false
-    code-fold: true
-    code-overflow: wrap
 execute:
   freeze: auto
 editor: visual
@@ -419,6 +420,7 @@ tibble::as_tibble(summary(load_scores))
 ## Leaf variegation mapping
 
 ```{r}
+#| code-summary: "Map the leaf variegation marker to the most likely locus responsible for the trait and plot the updated linkage map"
 #| label: fig-link_map_leaf_variegation
 #| fig-cap: "Genetic linkage mapping of the leaf variegation trait leaf_var (moved to the position with the highest LOD score of 3.83)"
 
@@ -446,22 +448,26 @@ qtl::plotMap(dta_linkage_map_qualt_phenotypes,
 ::: {#refs}
 :::
 
-# Appendix: R packages version info {.unnumbered}
+# Appendix: Version information {.unnumbered}
 
 ::: {#r_pkg_version_info .callout-note collapse="true" appearance="minimal"}
 ## R session info with information on the R version as well as the packages that were loaded
 
 ```{r}
-#| message: true
 #| code-fold: false
+#| message: true
 
 message(paste(capture.output(sessionInfo()), "\n", collapse = ""))
 ```
 :::
 
-# Appendix: All code for this report {.unnumbered}
+# Appendix: Source code {.unnumbered}
+
+::: {#r_source_code .callout-note collapse="true" appearance="minimal"}
+## The R source code for this research report
 
 ```{r ref.label=knitr::all_labels()}
-#| label: fig-r_code
+#| code-fold: false
 #| eval: false
 ```
+:::
