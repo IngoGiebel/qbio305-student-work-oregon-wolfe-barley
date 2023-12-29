@@ -3,41 +3,46 @@ title: "QBio305 - Genetic analysis of phenotypic variation measured in the Orego
 author: "Ingo Giebel"
 date: today
 lang: en-US
+eol: lf
+resource-path: 
+  - .
+  - ..
+  - ../docs
+  - ../results
+bibliography: bibliography.bib
+csl: apa
+self-contained: true
+self-contained-math: true
 title-block-banner: true
+page-layout: full
+toc: true
+toc-location: left
+toc-expand: 3
+number-sections: true
+code-tools: true
+code-link: true
+code-fold: true
+code-overflow: wrap
+fig-format: retina
+fig-align: left
+fig-responsive: true
+fig-width: 9.5
+fig-height: 6.5
+smooth-scroll: true
 format:
   html:
-    self-contained: true
-    self-contained-math: true
-    resource-path: [., .., ../docs, ../results]
     theme:
       light: flatly
       dark: darkly
     grid:
       sidebar-width: 500px
-    page-layout: full
-    number-sections: true
-    toc: true
-    toc-location: left
-    toc-expand: 3
-    code-tools: true
-    code-link: true
-    code-fold: true
-    code-overflow: wrap
-    fig-format: retina
-    fig-align: left
-    fig-responsive: true
-    fig-width: 9.5
-    fig-height: 6.5
     html-math-method: mathjax
-    smooth-scroll: true
-    bibliography: bibliography.bib
-    csl: apa
-    cache: true
 knitr:
   opts_chunk:
     warning: false
     message: false
 execute:
+  cache: true
   freeze: auto
 editor: visual
 ---
