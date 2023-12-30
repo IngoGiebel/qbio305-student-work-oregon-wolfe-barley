@@ -42,6 +42,8 @@ knitr:
   opts_chunk:
     warning: false
     message: false
+    dev: svglite
+    fig.path: ../results/
 execute:
   cache: true
   freeze: auto
@@ -214,6 +216,8 @@ dta_quant_clean <- dta_quant_raw[-c(14, 40, 182), ]
 
 ```{r}
 #| code-summary: "Densitiy plot comparing the height of the different genotypes"
+#| label: fig-clean_genotype_heights
+#| fig-cap: "Plants heights of the different genotypes"
 
 # Densitiy plot comparing the height of the different genotypes
 ggpubr::ggdensity(
@@ -240,6 +244,8 @@ ggpubr::ggdensity(
 
 ```{r}
 #| code-summary: "Summary statistics per genotype"
+#| label: tbl-clean_genotype_heights
+#| tbl-cap: "Plants heights of the different genotypes"
 
 # Summary statistics per genotype
 dta_quant_clean |>
