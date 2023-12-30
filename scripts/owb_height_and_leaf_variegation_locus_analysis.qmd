@@ -204,6 +204,38 @@ anova_all_markers <- function(data, genetic_map, phenotype, marker_names) {
 }
 ```
 
+## Detection of outliers
+
+@fig-raw_aov_height_residuals_cooks_dist shows a Cook's distance plot of the ANOVA residuals, which reveals the rows 14, 40, and 182 as outliers.
+
+```{r}
+#| code-summary: "Height ~ genotype ANOVA"
+
+# Fit an ANOVA for the height ~ genotype
+height_raw_aov <- aov(Height ~ Genotype, data = dta_quant_raw)
+```
+
+```{r}
+#| code-summary: "Create a Cook's distance plot"
+#| label: fig-raw_aov_height_residuals_cooks_dist
+#| fig-cap: "Cook's distance plot of the ANOVA residuals. The rows 14, 40, and 182  (in the genotypes OWB33, OWB76, and OWB54) are detected as outliers."
+
+# Cook's distance plot
+plot(height_raw_aov, which = 4, frame = FALSE)
+title(xlab = "Obs. number")
+```
+
+## Cleansing the data
+
+The dectected three outliers are removed because such outliers can severely affect normality and homogeneity of the variance.
+
+```{r}
+#| code-summary: "Remove outliers (data cleansing)"
+
+# Remove outliers
+dta_quant_clean <- dta_quant_raw[-c(14, 40, 182), ]
+```
+
 ## Analyzing the raw data
 
 ### Height comparison for the different genotypes
@@ -231,6 +263,9 @@ ggpubr::ggdensity(
   )
 ```
 
+::: {.callout-note collapse="true" appearance="minimal"}
+## Summary statistics per genotype
+
 ```{r}
 #| code-summary: "Summary statistics per genotype"
 
@@ -243,6 +278,7 @@ dta_quant_raw |>
     Mean = mean(Height),
     Sd = sd(Height)
   ) |>
+  dplyr::arrange(Mean) |>
   gt::gt() |>
   gt::fmt_number(
     columns = Mean,
@@ -256,13 +292,9 @@ dta_quant_raw |>
   gt::tab_options(
     table.align = "left",
     container.width = gt::px(900)
-  ) |>
-  gt::opt_interactive(
-    use_highlight = TRUE,
-    use_compact_mode = TRUE,
-    use_page_size_select = TRUE
   )
 ```
+:::
 
 ### ANOVA height \~ genotype
 
@@ -323,15 +355,6 @@ plot(height_raw_aov, which = 2)
 ```
 
 ```{r}
-#| code-summary: "Create a Cook's distance plot"
-#| label: fig-raw_aov_height_residuals_cooks_dist
-#| fig-cap: "Cook's distance plot of the ANOVA residuals - raw data"
-
-# Cook's distance plot
-plot(height_raw_aov, which = 4)
-```
-
-```{r}
 #| code-summary: "Shapiro-Wilk test for normality"
 
 # Shapiro-Wilk test for normality
@@ -341,17 +364,6 @@ shapiro.test(height_raw_aov$residuals)
 **Result:** According to the Shapiro-Wilk test for normality, it is unlikely that the raw data is normally distributed (p-values \< $2.2 \times 10^{-16}$). Nevertheless, the plots reveal that the data conform at least roughly to a normal distribution, in particular without the three outliers. Therefore, the further analysis will be done using ANOVA with cleansed data (without the outliers).
 
 ## Analyzing the cleansed data
-
-### Cleanse the data
-
-```{r}
-#| code-summary: "Remove outliers (data cleansing)"
-
-# Remove outliers
-dta_quant_clean <- dta_quant_raw[-c(14, 40, 182), ]
-```
-
-### ANOVA height \~ genotype
 
 ```{r}
 #| code-summary: "Height ~ genotype ANOVA (cleansed data)"
@@ -459,7 +471,31 @@ marker_pval_sig_df <- marker_pval_df |>
     "Min pos" = min(pos),
     "Max pos" = max(pos)
   )
-marker_pval_sig_df
+
+# Table output
+marker_pval_sig_df |>
+  gt::gt() |>
+  gt::fmt_scientific(
+    columns = `Min p-val`,
+    n_sigfig = 2
+  ) |>
+  gt::fmt_scientific(
+    columns = `Median p-val`,
+    n_sigfig = 2
+  ) |>
+  gt::fmt_number(
+    columns = `Min pos`,
+    decimals = 1
+  ) |>
+  gt::fmt_number(
+    columns = `Max pos`,
+    decimals = 1
+  ) |>
+  gt::opt_stylize() |>
+  gt::tab_options(
+    table.align = "left",
+    container.width = gt::px(900)
+  )
 ```
 
 **Result:** The plant height is mainly significantly effected by a genomic region within gene 2H. But there are also markers within the genes 1H, 3H, 5H, and 6H which have a significant impact on the plant height.
@@ -508,7 +544,32 @@ load_scores <- calc_load_scores(
   dta_linkage_map_qualt_phenotypes,
   "leaf_variegation"
 )
-tibble::as_tibble(summary(load_scores))
+tibble::as_tibble(summary(load_scores)) |>
+  dplyr::filter(chr != "un") |>
+  gt::gt() |>
+  gt::cols_label(
+    chr = "Chr",
+    pos = "Position",
+    lod = "Lod score",
+    length = "Length"
+  ) |>
+  gt::fmt_number(
+    columns = pos,
+    decimals = 1
+  ) |>
+  gt::fmt_number(
+    columns = lod,
+    decimals = 1
+  ) |>
+  gt::fmt_number(
+    columns = length,
+    decimals = 1
+  ) |>
+  gt::opt_stylize() |>
+  gt::tab_options(
+    table.align = "left",
+    container.width = gt::px(900)
+  )
 ```
 
 ## Leaf variegation mapping
