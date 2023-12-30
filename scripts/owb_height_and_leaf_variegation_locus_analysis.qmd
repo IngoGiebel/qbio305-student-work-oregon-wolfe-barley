@@ -78,6 +78,7 @@ library(qtl)
 
 ```{r}
 #| code-summary: "Set R options for scientific notation"
+#| code-fold: false
 #| output: false
 
 options(scipen = 1)
@@ -141,36 +142,7 @@ dta_linkage_map_qualt_phenotypes <- qtl::read.cross(
 ## Function definitions
 
 ```{r}
-#| code-summary: "Functions for plotting a histogram of ANOVA residuals and for conducting a phenotype ~ marker ANOVA for each marker within a given list of markers"
-
-# Plot a histogram of the residuals
-plot_residuals_hist <- function(data_aov, xlab) {
-  res <- data_aov$residuals
-  ggplot2::ggplot(
-    data = data.frame(
-      1:length(res),
-      res
-    ),
-    mapping = ggplot2::aes(x = res),
-  ) +
-    ggplot2::geom_histogram(
-      mapping = ggplot2::aes(y = ggplot2::after_stat(width * density)),
-      color = "darkgrey",
-      bins = 50
-    ) +
-    ggplot2::stat_function(
-      fun = dnorm,
-      args = list(
-        mean = mean(res),
-        sd = sd(res)
-      ),
-      color = "darkred"
-    ) +
-    ggplot2::labs(
-      x = xlab,
-      y = "Density"
-    )
-}
+#| code-summary: "Function for conducting a phenotype ~ marker ANOVA for each marker within a given list of markers"
 
 # Conduct an ANOVA of phenotype ~ marker for each marker within marker_names
 anova_all_markers <- function(data, genetic_map, phenotype, marker_names) {
@@ -209,7 +181,8 @@ anova_all_markers <- function(data, genetic_map, phenotype, marker_names) {
 @fig-raw_aov_height_residuals_cooks_dist shows a Cook's distance plot of the ANOVA residuals, which reveals the rows 14, 40, and 182 as outliers.
 
 ```{r}
-#| code-summary: "Height ~ genotype ANOVA"
+#| code-summary: "Height ~ genotype ANOVA (raw data)"
+#| code-fold: false
 
 # Fit an ANOVA for the height ~ genotype
 height_raw_aov <- aov(Height ~ Genotype, data = dta_quant_raw)
@@ -217,12 +190,12 @@ height_raw_aov <- aov(Height ~ Genotype, data = dta_quant_raw)
 
 ```{r}
 #| code-summary: "Create a Cook's distance plot"
+#| code-fold: false
 #| label: fig-raw_aov_height_residuals_cooks_dist
 #| fig-cap: "Cook's distance plot of the ANOVA residuals. The rows 14, 40, and 182  (in the genotypes OWB33, OWB76, and OWB54) are detected as outliers."
 
 # Cook's distance plot
 plot(height_raw_aov, which = 4, frame = FALSE)
-title(xlab = "Obs. number")
 ```
 
 ## Cleansing the data
@@ -231,21 +204,20 @@ The dectected three outliers are removed because such outliers can severely affe
 
 ```{r}
 #| code-summary: "Remove outliers (data cleansing)"
+#| code-fold: false
 
 # Remove outliers
 dta_quant_clean <- dta_quant_raw[-c(14, 40, 182), ]
 ```
 
-## Analyzing the raw data
-
-### Height comparison for the different genotypes
+## Height comparison for the different genotypes
 
 ```{r}
 #| code-summary: "Densitiy plot comparing the height of the different genotypes"
 
 # Densitiy plot comparing the height of the different genotypes
 ggpubr::ggdensity(
-  data = dta_quant_raw,
+  data = dta_quant_clean,
   x = "Height",
   add = "mean",
   color = "Genotype",
@@ -264,13 +236,13 @@ ggpubr::ggdensity(
 ```
 
 ::: {.callout-note collapse="true" appearance="minimal"}
-## Summary statistics per genotype
+### Summary statistics per genotype
 
 ```{r}
 #| code-summary: "Summary statistics per genotype"
 
 # Summary statistics per genotype
-dta_quant_raw |>
+dta_quant_clean |>
   dplyr::select(Genotype, Height) |>
   dplyr::group_by(Genotype) |>
   dplyr::summarise(
@@ -290,133 +262,91 @@ dta_quant_raw |>
   ) |>
   gt::opt_stylize() |>
   gt::tab_options(
-    table.align = "left",
-    container.width = gt::px(900)
+    table.align = "left"
   )
 ```
 :::
 
-### ANOVA height \~ genotype
+## ANOVA height \~ genotype
 
-```{r}
-#| code-summary: "Height ~ genotype ANOVA"
-
-# Fit an ANOVA for the height ~ genotype
-height_raw_aov <- aov(Height ~ Genotype, data = dta_quant_raw)
-
-# Summary of the ANOVA analysis
-summary(height_raw_aov)
-```
-
-**Result:** The genotype has a significant effect on the plant height (p-value \< $2 \times 10^{-16}$).
-
-### Check the homogeneity of the raw data
-
-ANOVA assumes that the data are normally distributed and that the variance across the groups is approximately equal. These assumptions are assessed with some diagnostic plots and tests.
-
-```{r}
-#| code-summary: "Plot the ANOVA residuals vs fit in order to check the homogeneity of variance assumption"
-
-# Plot the ANOVA residuals vs fit in order to check the homogeneity
-# of variance assumption
-plot(height_raw_aov, which = 1)
-```
-
-```{r}
-#| code-summary: "Levene's test for homogeneity of variance across groups"
-
-# Levene's test for homogeneity of variance across groups
-car::leveneTest(Height ~ Genotype, data = dta_quant_raw)
-```
-
-**Result:** The variances are roughly homogeneous. The p-value for the Levene's test of the raw data is 0.7938. This means that the variances within the groups are not significantly different from each other, i.e., the homogeneity assumption of the variance is met. The rows 14, 40, and 182 are detected as outliers, which can severely affect normality and homogeneity of the variance. Therefore, these outliers (in the genotypes OWB33, OWB76, and OWB54) will be removed to meet the test assumptions.
-
-### Check the normality of the raw data
-
-```{r}
-#| code-summary: "Plot a histogram of the ANOVA residuals"
-#| label: fig-raw_aov_height_residuals_histogram
-#| fig-cap: "Histogram of the ANOVA residuals - raw data"
-
-# Plot a histogram of the ANOVA residuals
-plot_residuals_hist(
-  height_raw_aov,
-  "Residuals of the ANOVA height ~ genotype"
-)
-```
-
-```{r}
-#| code-summary: "Create a Q-Q plot of the ANOVA residuals"
-#| label: fig-raw_aov_height_residuals_qq
-#| fig-cap: "Q-Q plot of the ANOVA residuals - raw data"
-
-# Q-Q plot of the ANOVA residuals
-plot(height_raw_aov, which = 2)
-```
-
-```{r}
-#| code-summary: "Shapiro-Wilk test for normality"
-
-# Shapiro-Wilk test for normality
-shapiro.test(height_raw_aov$residuals)
-```
-
-**Result:** According to the Shapiro-Wilk test for normality, it is unlikely that the raw data is normally distributed (p-values \< $2.2 \times 10^{-16}$). Nevertheless, the plots reveal that the data conform at least roughly to a normal distribution, in particular without the three outliers. Therefore, the further analysis will be done using ANOVA with cleansed data (without the outliers).
-
-## Analyzing the cleansed data
+The Height \~ genotype ANOVA reveals that the genotype has a significant effect on the plant height (p-value \< $2 \times 10^{-16}$).
 
 ```{r}
 #| code-summary: "Height ~ genotype ANOVA (cleansed data)"
+#| code-fold: false
 
-# ANOVA for the height (cleansed data)
+# Fit an ANOVA for the height ~ genotype
 height_clean_aov <- aov(Height ~ Genotype, data = dta_quant_clean)
 
 # Summary of the ANOVA analysis
 summary(height_clean_aov)
 ```
 
-### Check the normality of the cleansed data
+## Test for homogeneity
+
+ANOVA assumes that the data are normally distributed and that the variance across the groups is approximately equal.
+
+@fig-clean_aov_height_residuals_vs_fit shows a plot of the ANOVA residuals vs fitted values. This plot and the p-value of 0.52 for the Levene's test indicate that the variances within the groups are not significantly different from each other, i.e., the homogeneity assumption of the variance is met.
+
+```{r}
+#| code-summary: "Plot the ANOVA residuals vs fit in order to check the homogeneity of variance assumption"
+#| code-fold: false
+#| label: fig-clean_aov_height_residuals_vs_fit
+#| fig-cap: "Cook's distance plot of the ANOVA residuals. The rows 14, 40, and 182  (in the genotypes OWB33, OWB76, and OWB54) are detected as outliers."
+#| out.width: "75%"
+
+# Plot the ANOVA residuals vs fit in order to check the homogeneity
+# of variance assumption
+plot(height_clean_aov, which = 1, frame = FALSE)
+```
+
+```{r}
+#| code-summary: "Levene's test for homogeneity of variance across groups"
+#| code-fold: false
+#| output: false
+
+# Levene's test for homogeneity of variance across groups
+car::leveneTest(Height ~ Genotype, data = dta_quant_clean)
+```
+
+## Test for normality
+
+According to the Shapiro-Wilk test for normality, it is unlikely that the cleansed data is normally distributed p-value = $7.823 \times 10^{-14}$). Nevertheless, the histogram (@fig-clean_aov_height_residuals_histogram) and the Q-Q plot (@fig-clean_aov_height_residuals_qq) of the ANOVA residuals show that the data conform at least roughly to a normal distribution.
 
 ```{r}
 #| code-summary: "Plot a histogram of the ANOVA residuals"
+#| code-fold: false
 #| label: fig-clean_aov_height_residuals_histogram
-#| fig-cap: "Histogram of the ANOVA residuals - clean data"
+#| fig-cap: "Density plot of the ANOVA residuals"
+#| out.width: "75%"
 
-# Plot a histogram of the ANOVA residuals
-plot_residuals_hist(
-  height_clean_aov,
-  "Residuals of the ANOVA height ~ genotype"
-)
+# Plot a density histogram of the ANOVA residuals
+plot(density(height_clean_aov$residuals), frame = FALSE)
 ```
 
 ```{r}
 #| code-summary: "Create a Q-Q plot of the ANOVA residuals"
+#| code-fold: false
 #| label: fig-clean_aov_height_residuals_qq
-#| fig-cap: "Q-Q plot of the ANOVA residuals - clean data"
+#| fig-cap: "Q-Q plot of the ANOVA residuals"
+#| out.width: "75%"
 
 # Q-Q plot of the ANOVA residuals
-plot(height_clean_aov, which = 2)
-```
-
-```{r}
-#| code-summary: "Create a Cook's distance plot"
-#| label: fig-clean_aov_height_residuals_cooks_dist
-#| fig-cap: "Cook's distance plot of the ANOVA residuals - clean data"
-
-# Cook's distance plot
-plot(height_clean_aov, which = 4)
+plot(height_clean_aov, which = 2, frame = FALSE)
 ```
 
 ```{r}
 #| code-summary: "Shapiro-Wilk test for normality"
+#| code-fold: false
+#| output: false
 
 # Shapiro-Wilk test for normality
 shapiro.test(height_clean_aov$residuals)
 ```
 
-**Result:** According to the Shapiro-Wilk test for normality, it is still unlikely that the cleansed data is normally distributed (p-value = $7.823 \times 10^{-14}$. Nevertheless, the plots reveal that the data conform at least roughly to a normal distribution, in particular without the removed three outliers.
+## QTL analysis of plant height
 
-### QTL analysis of plant height
+@fig-clean_height_marker_effects_manhattan and @tbl-clean_height_chr_impacts show that the plant height is mainly significantly effected by a genomic region within gene 2H. But there are also markers within the genes 1H, 3H, 5H, and 6H which have a significant impact on the plant height.
 
 ```{r}
 #| code-summary: "Create a Manhattan plot with the genome-wide p-values for the markers"
@@ -457,6 +387,8 @@ qqman::manhattan(
 
 ```{r}
 #| code-summary: "Determine all gene positions which have p-value less than the Bonferroni corrected p-value"
+#| label: tbl-clean_height_chr_impacts
+#| tbl-cap: "Impact of the chromosomes on the plant height"
 
 # Determine all gene positions which have p-value less than the
 # Bonferroni corrected p-value
@@ -493,12 +425,9 @@ marker_pval_sig_df |>
   ) |>
   gt::opt_stylize() |>
   gt::tab_options(
-    table.align = "left",
-    container.width = gt::px(900)
+    table.align = "left"
   )
 ```
-
-**Result:** The plant height is mainly significantly effected by a genomic region within gene 2H. But there are also markers within the genes 1H, 3H, 5H, and 6H which have a significant impact on the plant height.
 
 # Genetic linkage mapping of the leaf variegation trait
 
@@ -567,12 +496,13 @@ tibble::as_tibble(summary(load_scores)) |>
   ) |>
   gt::opt_stylize() |>
   gt::tab_options(
-    table.align = "left",
-    container.width = gt::px(900)
+    table.align = "left"
   )
 ```
 
 ## Leaf variegation mapping
+
+The leaf variegation of the Oregon Wolfe barley collection is significantly effected by the chromosome 2H at position 192.8. @fig-link_map_leaf_variegation shows the linkage mapping of that trait. According to @giménez2021, the leaf variegation is controlled by the gene *Wst*. @fig-gimenez2021-molecular-marker-locations shows their phenotypic trait mapping results, which are in accordance with these findings.
 
 ```{r}
 #| code-summary: "Map the leaf variegation marker to the most likely locus responsible for the trait and plot the updated linkage map"
@@ -593,8 +523,6 @@ qtl::plotMap(dta_linkage_map_qualt_phenotypes,
   show.marker.names = TRUE
 )
 ```
-
-**Result:** The leaf variegation of the Oregon Wolfe barley collection is significantly effected by the chromosome 2H at position 192.8. @fig-link_map_leaf_variegation shows the linkage mapping of that trait. According to @giménez2021, the leaf variegation is controlled by the gene *Wst*. @fig-gimenez2021-molecular-marker-locations shows their phenotypic trait mapping results, which are in accordance with these findings.
 
 [![Phenotypic traits mapping of the Oregon Wolfe Barley population. From "An F2 barley population as a tool for teaching mendelian genetics", by Giménez, E., Benavente, E., Pascual, L., García-Sampedro, A., López-Fernández, M., Vázquez, J. F., & Giraldo, P., 2021, Plants, 10(4), p. 694 (https://doi.org/10.3390/plants10040694#sec2-plants-10-00694).](../docs/gimenez2021-fig3.webp){#fig-gimenez2021-molecular-marker-locations}](https://doi.org/10.3390/plants10040694#sec2-plants-10-00694)
 
