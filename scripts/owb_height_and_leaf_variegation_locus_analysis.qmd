@@ -35,7 +35,8 @@ format:
       light: flatly
       dark: darkly
     grid:
-      sidebar-width: 500px
+      sidebar-width: 450px
+      body-width: 900px
     html-math-method: mathjax
 knitr:
   opts_chunk:
@@ -63,6 +64,8 @@ editor: visual
 library(here)
 # For transforming and representing data
 library(tidyverse)
+# For printing tables
+library(gt)
 # For plotting
 library(ggpubr)
 # For Levene's test
@@ -239,6 +242,25 @@ dta_quant_raw |>
     Count = n(),
     Mean = mean(Height),
     Sd = sd(Height)
+  ) |>
+  gt::gt() |>
+  gt::fmt_number(
+    columns = Mean,
+    decimals = 1
+  ) |>
+  gt::fmt_number(
+    columns = Sd,
+    decimals = 2
+  ) |>
+  gt::opt_stylize() |>
+  gt::tab_options(
+    table.align = "left",
+    container.width = gt::px(900)
+  ) |>
+  gt::opt_interactive(
+    use_highlight = TRUE,
+    use_compact_mode = TRUE,
+    use_page_size_select = TRUE
   )
 ```
 
