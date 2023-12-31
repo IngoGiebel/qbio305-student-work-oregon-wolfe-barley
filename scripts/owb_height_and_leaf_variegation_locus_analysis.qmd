@@ -435,15 +435,33 @@ marker_pval_sig_df |>
   )
 ```
 
-# Genetic linkage mapping of the leaf variegation trait
+# Genetic linkage mapping of qualitative traits
+
+The following qualitative traits are mapped to the genetic marker with the closest linkage:
+
+-   seed color (black/yellow seeds)
+
+-   hooded vs. normal florets
+
+-   long vs. short awns
+
+-   two-row vs. six-row
+
+-   hulled vs. naked seeds
+
+-   leaf variegation
+
+**Findings:** The leaf variegation of the Oregon Wolfe barley collection is significantly effected by the chromosome 2H at position 192.8. According to @giménez2021, the leaf variegation is controlled by the gene *Wst*. @fig-gimenez2021-molecular-marker-locations shows their phenotypic trait mapping results, which are in accordance with these findings.
+
+@tbl-lod_scores_qualt_phenotypes and @fig-link_map_qualt_traits show the linkage mappings of the qualitative traits.
 
 ## Function definitions
 
 ```{r}
-#| code-summary: "Functions for determining the LOD scores of a given phenotypic marker and for mapping it to the most likely locus responsible for the trait"
+#| code-summary: "Functions for determining the LOD scores of a given phenotypic marker and for locus mapping"
 
 # Determine the LOD scores of the given marker for all possible positions
-calc_load_scores <- function(linkage_map, phenotype) {
+calc_lod_scores <- function(linkage_map, phenotype) {
   # Try all possible positions for the marker, keeping all other markers
   # fixed, and evaluate the log likelihood and estimate the chromosome length
   qtl::tryallpositions(
@@ -453,51 +471,99 @@ calc_load_scores <- function(linkage_map, phenotype) {
   )
 }
 
-# Map the qualitative marker to the most likely locus responsible for
-# the trait. Returns an updated linkage map.
-map_qualt_trait <- function(linkage_map, phenotype, lod_scores) {
-  # Determine the LOD entry with the highes LOD score
-  best_marker_pos <- dplyr::slice_max(lod_scores, n = 1, lod)
-
+# Map the qualitative marker to the given chromosome position and return
+# the updated linkage map.
+map_qualt_trait <- function(linkage_map, marker, newchr, newpos) {
   # Move the phenotype marker to the position with the highest LOD score
   qtl::movemarker(
     linkage_map,
-    marker = phenotype,
-    newchr = dplyr::select(best_marker_pos, chr)[1, 1],
-    newpos = dplyr::select(best_marker_pos, pos)[1, 1]
+    marker = marker,
+    newchr = newchr,
+    newpos = newpos
   )
 }
 ```
 
-## Calculate the LOD scores
+## Calculate the LOD scores and map the qualitative traits to the most likely loci
 
 ```{r}
-#| code-summary: "Determine the LOD scores of the leaf variegation for all possible positions"
+#| code-summary: "List of the qualitative markers"
 
-# Determine the LOD scores of the leaf variegation for all possible positions
-load_scores <- calc_load_scores(
-  dta_linkage_map_qualt_phenotypes,
-  "leaf_variegation"
+qualt_markers <- c(
+  "seed_colour",
+  "hooded",
+  "awn_length",
+  "2vs6row",
+  "naked_seed",
+  "leaf_variegation")
+```
+
+```{r}
+#| code-summary: "For all qualitative traits: Determine the LOD scores of the trait for all possible positions and map the respective trait marker to the locus that is most likely responsible for the trait"
+
+# Tibble for the traits and most likely chromosome positions
+lod_scores_all_traits_df <- tibble::tibble(
+  Chr = character(),
+  Trait = character(),
+  `LOD score` = numeric(),
+  Position = numeric(),
+  Length = numeric()
 )
-tibble::as_tibble(summary(load_scores)) |>
-  dplyr::filter(chr != "un") |>
+
+for (qualt_marker in qualt_markers) {
+  # Determine the LOD scores of the trait for all possible positions
+  # and get the entry with the highest LOD score
+  highest_lod_score_df <- calc_lod_scores(
+    dta_linkage_map_qualt_phenotypes,
+    qualt_marker
+  ) |>
+    dplyr::slice_max(n = 1, lod)
+
+  # Tibble for the traits and most likely chromosome positions
+  lod_scores_all_traits_df <- lod_scores_all_traits_df |>
+    tibble::add_row(
+      highest_lod_score_df |>
+        dplyr::rename(
+          Chr = chr,
+          Position = pos,
+          `LOD score` = lod,
+          Length = length
+        ) |>
+        dplyr::mutate(
+          Trait = qualt_marker
+        )
+    )
+
+  # Map the trait marker to the the locus that is most likely responsible
+  # for the trait
+  dta_linkage_map_qualt_phenotypes <- map_qualt_trait(
+    dta_linkage_map_qualt_phenotypes,
+    qualt_marker,
+    dplyr::select(highest_lod_score_df, chr)[1, 1],
+    dplyr::select(highest_lod_score_df, pos)[1, 1]
+  )
+}
+```
+
+```{r}
+#| code-summary: "Print a presentation table of the linkage mappings and highest LOD scores for each of the qualitative traits"
+#| label: tbl-lod_scores_qualt_phenotypes
+#| tbl-cap: "Linkage mappings and highest LOD scores of the qualitative traits seed color, hooded vs. normal florets, long vs. short awns, two-row vs. six-row, hulled vs. naked seeds, and leaf variegation"
+
+lod_scores_all_traits_df |>
+  dplyr::group_by(Chr) |>
+  dplyr::arrange(Chr, Position) |>
   gt::gt() |>
-  gt::cols_label(
-    chr = "Chr",
-    pos = "Position",
-    lod = "Lod score",
-    length = "Length"
-  ) |>
   gt::fmt_number(
-    columns = pos,
+    columns = Position,
     decimals = 1
   ) |>
   gt::fmt_number(
-    columns = lod,
+    columns = `LOD score`,
     decimals = 1
   ) |>
   gt::fmt_number(
-    columns = length,
+    columns = Length,
     decimals = 1
   ) |>
   gt::opt_stylize() |>
@@ -506,25 +572,14 @@ tibble::as_tibble(summary(load_scores)) |>
   )
 ```
 
-## Leaf variegation mapping
-
-The leaf variegation of the Oregon Wolfe barley collection is significantly effected by the chromosome 2H at position 192.8. @fig-link_map_leaf_variegation shows the linkage mapping of that trait. According to @giménez2021, the leaf variegation is controlled by the gene *Wst*. @fig-gimenez2021-molecular-marker-locations shows their phenotypic trait mapping results, which are in accordance with these findings.
-
 ```{r}
-#| code-summary: "Map the leaf variegation marker to the most likely locus responsible for the trait and plot the updated linkage map"
-#| label: fig-link_map_leaf_variegation
-#| fig-cap: "Genetic linkage mapping of the leaf variegation trait leaf_var (moved to the position with the highest LOD score of 3.83)"
-
-# Map the leaf variegation marker to the most likely locus responsible
-# for the trait
-dta_linkage_map_qualt_phenotypes <- map_qualt_trait(
-  dta_linkage_map_qualt_phenotypes,
-  "leaf_variegation",
-  load_scores
-)
+#| code-summary: "Plot the updated linkage map"
+#| label: fig-link_map_qualt_traits
+#| fig-cap: "Genetic linkage mappings of the qualitative traits seed color, hooded vs. normal florets, long vs. short awns, two-row vs. six-row, hulled vs. naked seeds, and leaf variegation"
 
 # Plot the updated linkage map
-qtl::plotMap(dta_linkage_map_qualt_phenotypes,
+qtl::plotMap(
+  dta_linkage_map_qualt_phenotypes,
   main = "",
   show.marker.names = TRUE
 )
