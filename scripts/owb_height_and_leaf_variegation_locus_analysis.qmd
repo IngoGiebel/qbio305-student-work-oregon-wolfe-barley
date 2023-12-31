@@ -11,6 +11,8 @@ resource-path:
   - ../results
 bibliography: bibliography.bib
 csl: apa
+pdf-engine: lualatex
+latex-makeindex: xindex
 self-contained: true
 self-contained-math: true
 title-block-banner: true
@@ -248,7 +250,7 @@ ggpubr::ggdensity(
 #| tbl-cap: "Plants heights of the different genotypes"
 
 # Summary statistics per genotype
-dta_quant_clean |>
+tbl_clean_genotype_heights <- dta_quant_clean |>
   dplyr::select(Genotype, Height) |>
   dplyr::group_by(Genotype) |>
   dplyr::summarise(
@@ -270,6 +272,18 @@ dta_quant_clean |>
   gt::tab_options(
     table.align = "left"
   )
+tbl_clean_genotype_heights
+```
+
+```{r}
+#| code-summary: "Save table tbl-clean_genotype_heights"
+
+# Save table tbl-clean_genotype_heights
+gt::gtsave(
+  tbl_clean_genotype_heights,
+  filename = "tbl-clean_genotype_heights.tex",
+  path = "../results/"
+)
 ```
 :::
 
@@ -411,7 +425,7 @@ marker_pval_sig_df <- marker_pval_df |>
   )
 
 # Table output
-marker_pval_sig_df |>
+tbl_clean_height_chr_impacts <- marker_pval_sig_df |>
   gt::gt() |>
   gt::fmt_scientific(
     columns = `Min p-val`,
@@ -433,6 +447,18 @@ marker_pval_sig_df |>
   gt::tab_options(
     table.align = "left"
   )
+tbl_clean_height_chr_impacts
+```
+
+```{r}
+#| code-summary: "Save table tbl-clean_height_chr_impacts"
+
+# Save table tbl-clean_height_chr_impacts
+gt::gtsave(
+  tbl_clean_height_chr_impacts,
+  filename = "tbl-clean_height_chr_impacts.tex",
+  path = "../results/"
+)
 ```
 
 # Genetic linkage mapping of qualitative traits
@@ -550,7 +576,7 @@ for (qualt_marker in qualt_markers) {
 #| label: tbl-lod_scores_qualt_phenotypes
 #| tbl-cap: "Linkage mappings and highest LOD scores of the qualitative traits seed color, hooded vs. normal florets, long vs. short awns, two-row vs. six-row, hulled vs. naked seeds, and leaf variegation"
 
-lod_scores_all_traits_df |>
+tbl_lod_scores_qualt_phenotypes <- lod_scores_all_traits_df |>
   dplyr::group_by(Chr) |>
   dplyr::arrange(Chr, Position) |>
   gt::gt() |>
@@ -570,6 +596,18 @@ lod_scores_all_traits_df |>
   gt::tab_options(
     table.align = "left"
   )
+tbl_lod_scores_qualt_phenotypes
+```
+
+```{r}
+#| code-summary: "Save table tbl-lod_scores_qualt_phenotypes"
+
+# Save table tbl-lod_scores_qualt_phenotypes
+gt::gtsave(
+  tbl_lod_scores_qualt_phenotypes,
+  filename = "tbl-lod_scores_qualt_phenotypes.tex",
+  path = "../results/"
+)
 ```
 
 ```{r}
