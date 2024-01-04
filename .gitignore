@@ -13,6 +13,8 @@ docs/*
 .Ruserdata
 # svg-inkscape dirs
 svg-inkscape/
+# dvi files
+*.dvi
 # Quarto *files and *cache dirs
 *files/
 *cache/

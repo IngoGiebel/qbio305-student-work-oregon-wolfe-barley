@@ -56,11 +56,66 @@ editor: visual
 {{< include ../LICENSE.md >}}
 :::
 
+# Project folder structure
+
+@fig-proj_folder_struct shows the project folder structure required to execute this Quarto script (highlighted in purple). The project's base directory (= working directory) is automatically set when this project is opened via the RStudio project file `qbio305_student-work-oregon-wolfe-barley.Rproj`.
+
+The `data` subfolder contains the raw data files. The `docs` subfolder contains the LaTeX research report and the BibLaTex file `bibliography.lib` which includes all referenced bibliography entries (both for the research report and this script). The `results` subfolder contains all figures and tables created by this script. And, finally, the `scripts` subfolder contains this script, the produced HTML file, and the `apa.csl` configuration file required for creating APA (7th edition) conformant citations and bibliography entries.
+
+```{r, engine = "tikz"}
+#| code-summary: "Draw the project folder structure"
+#| label: fig-proj_folder_struct
+#| fig-cap: "Folder structure of this project"
+#| out-width: 12.0cm
+#| out-height: 12.0cm
+
+\begin{tikzpicture}[thick, font=\sffamily\large]
+
+  \draw (0, -1) -- +(1, 0) coordinate (c_1)
+    ++(0, -4) -- +(1, 0) coordinate (c_2)
+    ++(0, -2) -- +(1, 0) coordinate (c_3)
+    ++(0, -1) -- +(1, 0) coordinate (c_4)
+    ++(0, -4) -- +(1, 0) coordinate (c_5);
+
+  \node[right, draw, rounded corners] at (-1, 0) {project base dir};
+
+  \node[right] at (c_1) {data};
+  \draw (c_1) ++(0, -1) -- +(0.5, 0) coordinate (c_1_1)
+    ++(0, -1) -- +(0.5, 0) coordinate (c_1_2)
+    ++(0, -1) -- +(0.5, 0) coordinate (c_1_3);
+  \node[right] at (c_1_1) {dta\_owb\_genetic\_map.csv};
+  \node[right] at (c_1_2) {dta\_owb\_height\_and\_spike\_length\_by\_genotype.csv};
+  \node[right] at (c_1_3) {dta\_owb\_linkage\_map\_qualt\_phenotypes.csv};
+  \draw (c_1) ++(-0.2, 0) -- +(0, -3);
+
+  \node[right] at (c_2) {docs};
+  \draw (c_2) ++(0, -1) -- +(0.5, 0) coordinate (c_2_1);
+  \node[right] at (c_2_1) {bibliography.lib};
+  \draw (c_2) ++(-0.2, 0) -- +(0, -1);
+
+  \node[right] at (c_3) {results};
+
+  \node[right] at (c_4) {scripts};
+  \draw (c_4) ++(0, -1) -- +(0.5, 0) coordinate (c_4_1)
+    ++(0, -1) -- +(0.5, 0) coordinate (c_4_2)
+    ++(0, -1) -- +(0.5, 0) coordinate (c_4_3);
+  \node[right] at (c_4_1) {apa.csl};
+  \node[right] at (c_4_2) {owb\_height\_and\_leaf\_variegation\_locus\_analysis.html};
+  \node[right, purple] at (c_4_3) {owb\_height\_and\_leaf\_variegation\_locus\_analysis.qmd};
+  \draw (c_4) ++(-0.2, 0) -- +(0, -3);
+
+  \node[right] at (c_5) {qbio305\_student-work-oregon-wolfe-barley.Rproj};
+
+  \draw (0, -0.4) -- (0, -13);
+
+\end{tikzpicture}
+```
+
 # R Packages and options
 
 ## Load the required packages
 
-```{r}
+```{r appendix = TRUE}
 #| code-summary: "Load the required packages"
 #| output: false
 
@@ -80,7 +135,7 @@ library(qtl)
 
 ## Set R options for scientific notation
 
-```{r}
+```{r appendix = TRUE}
 #| code-summary: "Set R options for scientific notation"
 #| code-fold: false
 #| output: false
@@ -93,7 +148,7 @@ options(pillar.sigfig = 4)
 
 ## Determine the file paths of the raw data
 
-```{r}
+```{r appendix = TRUE}
 #| code-summary: "Determine the file paths of the raw data relative to the project's base directory"
 #| output: false
 
@@ -115,7 +170,7 @@ dta_owb_linkage_map_qualt_phenotypes_file_path <- here::here(
 
 ## Read in the raw data
 
-```{r}
+```{r appendix = TRUE}
 #| code-summary: "Read in the raw data: the quantitative data of the different OWB genotypes, the genetic map of OWB, and the qualitative phenotypes data"
 #| output: false
 
@@ -145,7 +200,7 @@ dta_linkage_map_qualt_phenotypes <- qtl::read.cross(
 
 ## Function definitions
 
-```{r}
+```{r appendix = TRUE}
 #| code-summary: "Function for conducting a phenotype ~ marker ANOVA for each marker within a given list of markers"
 
 # Conduct an ANOVA of phenotype ~ marker for each marker within marker_names
@@ -184,7 +239,7 @@ anova_all_markers <- function(data, genetic_map, phenotype, marker_names) {
 
 @fig-raw_aov_height_residuals_cooks_dist shows a Cook's distance plot of the ANOVA residuals, which reveals the rows 14, 40, and 182 as outliers.
 
-```{r}
+```{r appendix = TRUE}
 #| code-summary: "Height ~ genotype ANOVA (raw data)"
 #| code-fold: false
 
@@ -192,7 +247,7 @@ anova_all_markers <- function(data, genetic_map, phenotype, marker_names) {
 height_raw_aov <- aov(Height ~ Genotype, data = dta_quant_raw)
 ```
 
-```{r}
+```{r appendix = TRUE}
 #| code-summary: "Create a Cook's distance plot"
 #| code-fold: false
 #| label: fig-raw_aov_height_residuals_cooks_dist
@@ -206,7 +261,7 @@ plot(height_raw_aov, which = 4, frame = FALSE)
 
 The dectected three outliers are removed because such outliers can severely affect normality and homogeneity of the variance.
 
-```{r}
+```{r appendix = TRUE}
 #| code-summary: "Remove outliers (data cleansing)"
 #| code-fold: false
 
@@ -216,7 +271,7 @@ dta_quant_clean <- dta_quant_raw[-c(14, 40, 182), ]
 
 ## Height comparison for the different genotypes
 
-```{r}
+```{r appendix = TRUE}
 #| code-summary: "Densitiy plot comparing the height of the different genotypes"
 #| label: fig-clean_genotype_heights
 #| fig-cap: "Plants heights of the different genotypes"
@@ -244,7 +299,7 @@ ggpubr::ggdensity(
 ::: {.callout-note collapse="true" appearance="minimal"}
 ### Summary statistics per genotype
 
-```{r}
+```{r appendix = TRUE}
 #| code-summary: "Summary statistics per genotype"
 #| label: tbl-clean_genotype_heights
 #| tbl-cap: "Plants heights of the different genotypes"
@@ -275,7 +330,7 @@ tbl_clean_genotype_heights <- dta_quant_clean |>
 tbl_clean_genotype_heights
 ```
 
-```{r}
+```{r appendix = TRUE}
 #| code-summary: "Save table tbl-clean_genotype_heights"
 
 # Save table tbl-clean_genotype_heights
@@ -291,7 +346,7 @@ gt::gtsave(
 
 The Height \~ genotype ANOVA reveals that the genotype has a significant effect on the plant height (p-value \< $2 \times 10^{-16}$).
 
-```{r}
+```{r appendix = TRUE}
 #| code-summary: "Height ~ genotype ANOVA (cleansed data)"
 #| code-fold: false
 
@@ -308,7 +363,7 @@ ANOVA assumes that the data are normally distributed and that the variance acros
 
 @fig-clean_aov_height_residuals_vs_fit shows a plot of the ANOVA residuals vs fitted values. This plot and the p-value of 0.52 for the Levene's test indicate that the variances within the groups are not significantly different from each other, i.e., the homogeneity assumption of the variance is met.
 
-```{r}
+```{r appendix = TRUE}
 #| code-summary: "Plot the ANOVA residuals vs fit in order to check the homogeneity of variance assumption"
 #| code-fold: false
 #| label: fig-clean_aov_height_residuals_vs_fit
@@ -320,7 +375,7 @@ ANOVA assumes that the data are normally distributed and that the variance acros
 plot(height_clean_aov, which = 1, frame = FALSE)
 ```
 
-```{r}
+```{r appendix = TRUE}
 #| code-summary: "Levene's test for homogeneity of variance across groups"
 #| code-fold: false
 #| output: false
@@ -333,7 +388,7 @@ car::leveneTest(Height ~ Genotype, data = dta_quant_clean)
 
 According to the Shapiro-Wilk test for normality, it is unlikely that the cleansed data is normally distributed p-value = $7.823 \times 10^{-14}$). Nevertheless, the histogram (@fig-clean_aov_height_residuals_histogram) and the Q-Q plot (@fig-clean_aov_height_residuals_qq) of the ANOVA residuals show that the data conform at least roughly to a normal distribution.
 
-```{r}
+```{r appendix = TRUE}
 #| code-summary: "Plot a histogram of the ANOVA residuals"
 #| code-fold: false
 #| label: fig-clean_aov_height_residuals_histogram
@@ -344,7 +399,7 @@ According to the Shapiro-Wilk test for normality, it is unlikely that the cleans
 plot(density(height_clean_aov$residuals), frame = FALSE)
 ```
 
-```{r}
+```{r appendix = TRUE}
 #| code-summary: "Create a Q-Q plot of the ANOVA residuals"
 #| code-fold: false
 #| label: fig-clean_aov_height_residuals_qq
@@ -355,7 +410,7 @@ plot(density(height_clean_aov$residuals), frame = FALSE)
 plot(height_clean_aov, which = 2, frame = FALSE)
 ```
 
-```{r}
+```{r appendix = TRUE}
 #| code-summary: "Shapiro-Wilk test for normality"
 #| code-fold: false
 #| output: false
@@ -368,7 +423,7 @@ shapiro.test(height_clean_aov$residuals)
 
 @fig-clean_height_marker_effects_manhattan and @tbl-clean_height_chr_impacts show that the plant height is mainly significantly effected by a genomic region within gene 2H. But there are also markers within the genes 1H, 3H, 5H, and 6H which have a significant impact on the plant height.
 
-```{r}
+```{r appendix = TRUE}
 #| code-summary: "Create a Manhattan plot with the genome-wide p-values for the markers"
 #| label: fig-clean_height_marker_effects_manhattan
 #| fig-cap: "Manhattan plot of the genome-wide p-values for the genetic markers"
@@ -405,7 +460,7 @@ qqman::manhattan(
 )
 ```
 
-```{r}
+```{r appendix = TRUE}
 #| code-summary: "Determine all gene positions which have p-value less than the Bonferroni corrected p-value"
 #| label: tbl-clean_height_chr_impacts
 #| tbl-cap: "Impact of the chromosomes on the plant height"
@@ -450,7 +505,7 @@ tbl_clean_height_chr_impacts <- marker_pval_sig_df |>
 tbl_clean_height_chr_impacts
 ```
 
-```{r}
+```{r appendix = TRUE}
 #| code-summary: "Save table tbl-clean_height_chr_impacts"
 
 # Save table tbl-clean_height_chr_impacts
@@ -483,7 +538,7 @@ The following qualitative traits are mapped to the genetic marker with the close
 
 ## Function definitions
 
-```{r}
+```{r appendix = TRUE}
 #| code-summary: "Functions for determining the LOD scores of a given phenotypic marker and for locus mapping"
 
 # Determine the LOD scores of the given marker for all possible positions
@@ -512,7 +567,7 @@ map_qualt_trait <- function(linkage_map, marker, newchr, newpos) {
 
 ## Calculate the LOD scores and map the qualitative traits to the most likely loci
 
-```{r}
+```{r appendix = TRUE}
 #| code-summary: "List of the qualitative markers"
 
 qualt_markers <- c(
@@ -524,7 +579,7 @@ qualt_markers <- c(
   "leaf_variegation")
 ```
 
-```{r}
+```{r appendix = TRUE}
 #| code-summary: "For all qualitative traits: Determine the LOD scores of the trait for all possible positions and map the respective trait marker to the locus that is most likely responsible for the trait"
 
 # Tibble for the traits and most likely chromosome positions
@@ -571,7 +626,7 @@ for (qualt_marker in qualt_markers) {
 }
 ```
 
-```{r}
+```{r appendix = TRUE}
 #| code-summary: "Print a presentation table of the linkage mappings and highest LOD scores for each of the qualitative traits"
 #| label: tbl-lod_scores_qualt_phenotypes
 #| tbl-cap: "Linkage mappings and highest LOD scores of the qualitative traits seed color, hooded vs. normal florets, long vs. short awns, two-row vs. six-row, hulled vs. naked seeds, and leaf variegation"
@@ -599,7 +654,7 @@ tbl_lod_scores_qualt_phenotypes <- lod_scores_all_traits_df |>
 tbl_lod_scores_qualt_phenotypes
 ```
 
-```{r}
+```{r appendix = TRUE}
 #| code-summary: "Save table tbl-lod_scores_qualt_phenotypes"
 
 # Save table tbl-lod_scores_qualt_phenotypes
@@ -610,7 +665,7 @@ gt::gtsave(
 )
 ```
 
-```{r}
+```{r appendix = TRUE}
 #| code-summary: "Plot the updated linkage map"
 #| label: fig-link_map_qualt_traits
 #| fig-cap: "Genetic linkage mappings of the qualitative traits seed color, hooded vs. normal florets, long vs. short awns, two-row vs. six-row, hulled vs. naked seeds, and leaf variegation"
@@ -648,7 +703,7 @@ message(paste(capture.output(sessionInfo()), "\n", collapse = ""))
 ::: {#r_source_code .callout-note collapse="true" appearance="minimal"}
 ## The R source code for this research report
 
-```{r ref.label=knitr::all_labels()}
+```{r ref.label=knitr::all_labels(appendix == TRUE)}
 #| code-fold: false
 #| eval: false
 ```
