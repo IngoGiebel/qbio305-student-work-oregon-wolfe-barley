@@ -196,7 +196,7 @@ dta_linkage_map_qualt_phenotypes <- qtl::read.cross(
 )
 ```
 
-# Analyses for plant height
+# Analyses on quantitative traits
 
 ## Function definitions
 
@@ -235,7 +235,9 @@ anova_all_markers <- function(data, genetic_map, phenotype, marker_names) {
 }
 ```
 
-## Detection of outliers
+## Analyses on plant height
+
+### Detection of outliers
 
 @fig-raw_aov_height_residuals_cooks_dist shows a Cook's distance plot of the ANOVA residuals, which reveals the rows 14, 40, and 182 as outliers.
 
@@ -251,13 +253,13 @@ height_raw_aov <- aov(Height ~ Genotype, data = dta_quant_raw)
 #| code-summary: "Create a Cook's distance plot"
 #| code-fold: false
 #| label: fig-raw_aov_height_residuals_cooks_dist
-#| fig-cap: "Cook's distance plot of the ANOVA residuals. The rows 14, 40, and 182  (in the genotypes OWB33, OWB76, and OWB54) are detected as outliers."
+#| fig-cap: "Cook's distance plot of the ANOVA residuals. The rows 14, 40, and 182 (in the genotypes OWB33, OWB76, and OWB54) are detected as outliers."
 
 # Cook's distance plot
 plot(height_raw_aov, which = 4, frame = FALSE)
 ```
 
-## Cleansing the data
+### Cleansing the data
 
 The dectected three outliers are removed because such outliers can severely affect normality and homogeneity of the variance.
 
@@ -266,10 +268,10 @@ The dectected three outliers are removed because such outliers can severely affe
 #| code-fold: false
 
 # Remove outliers
-dta_quant_clean <- dta_quant_raw[-c(14, 40, 182), ]
+dta_height_clean <- dta_quant_raw[-c(14, 40, 182), ]
 ```
 
-## Height comparison for the different genotypes
+### Height comparison for the different genotypes
 
 ```{r appendix = TRUE}
 #| code-summary: "Densitiy plot comparing the height of the different genotypes"
@@ -278,7 +280,7 @@ dta_quant_clean <- dta_quant_raw[-c(14, 40, 182), ]
 
 # Densitiy plot comparing the height of the different genotypes
 ggpubr::ggdensity(
-  data = dta_quant_clean,
+  data = dta_height_clean,
   x = "Height",
   add = "mean",
   color = "Genotype",
@@ -305,7 +307,7 @@ ggpubr::ggdensity(
 #| tbl-cap: "Plants heights of the different genotypes"
 
 # Summary statistics per genotype
-tbl_clean_genotype_heights <- dta_quant_clean |>
+tbl_clean_genotype_heights <- dta_height_clean |>
   dplyr::select(Genotype, Height) |>
   dplyr::group_by(Genotype) |>
   dplyr::summarise(
@@ -342,22 +344,22 @@ gt::gtsave(
 ```
 :::
 
-## ANOVA height \~ genotype
+### ANOVA height \~ genotype
 
-The Height \~ genotype ANOVA reveals that the genotype has a significant effect on the plant height (p-value \< $2 \times 10^{-16}$).
+The height \~ genotype ANOVA reveals that the genotype has a significant effect on the plant height (p-value \< $2 \times 10^{-16}$).
 
 ```{r appendix = TRUE}
 #| code-summary: "Height ~ genotype ANOVA (cleansed data)"
 #| code-fold: false
 
 # Fit an ANOVA for the height ~ genotype
-height_clean_aov <- aov(Height ~ Genotype, data = dta_quant_clean)
+height_clean_aov <- aov(Height ~ Genotype, data = dta_height_clean)
 
 # Summary of the ANOVA analysis
 summary(height_clean_aov)
 ```
 
-## Test for homogeneity
+### Test for homogeneity
 
 ANOVA assumes that the data are normally distributed and that the variance across the groups is approximately equal.
 
@@ -367,7 +369,7 @@ ANOVA assumes that the data are normally distributed and that the variance acros
 #| code-summary: "Plot the ANOVA residuals vs fit in order to check the homogeneity of variance assumption"
 #| code-fold: false
 #| label: fig-clean_aov_height_residuals_vs_fit
-#| fig-cap: "Cook's distance plot of the ANOVA residuals. The rows 14, 40, and 182  (in the genotypes OWB33, OWB76, and OWB54) are detected as outliers."
+#| fig-cap: "ANOVA residuals"
 #| out.width: "75%"
 
 # Plot the ANOVA residuals vs fit in order to check the homogeneity
@@ -381,12 +383,12 @@ plot(height_clean_aov, which = 1, frame = FALSE)
 #| output: false
 
 # Levene's test for homogeneity of variance across groups
-car::leveneTest(Height ~ Genotype, data = dta_quant_clean)
+car::leveneTest(Height ~ Genotype, data = dta_height_clean)
 ```
 
-## Test for normality
+### Test for normality
 
-According to the Shapiro-Wilk test for normality, it is unlikely that the cleansed data is normally distributed p-value = $7.823 \times 10^{-14}$). Nevertheless, the histogram (@fig-clean_aov_height_residuals_histogram) and the Q-Q plot (@fig-clean_aov_height_residuals_qq) of the ANOVA residuals show that the data conform at least roughly to a normal distribution.
+According to the Shapiro-Wilk test for normality, it is unlikely that the cleansed data is normally distributed (p-value = $7.8 \times 10^{-14}$). Nevertheless, the histogram (@fig-clean_aov_height_residuals_histogram) and the Q-Q plot (@fig-clean_aov_height_residuals_qq) of the ANOVA residuals show that the data conform at least roughly to a normal distribution.
 
 ```{r appendix = TRUE}
 #| code-summary: "Plot a histogram of the ANOVA residuals"
@@ -419,30 +421,30 @@ plot(height_clean_aov, which = 2, frame = FALSE)
 shapiro.test(height_clean_aov$residuals)
 ```
 
-## QTL analysis of plant height
+### QTL analysis
 
 @fig-clean_height_marker_effects_manhattan and @tbl-clean_height_chr_impacts show that the plant height is mainly significantly effected by a genomic region within gene 2H. But there are also markers within the genes 1H, 3H, 5H, and 6H which have a significant impact on the plant height.
 
 ```{r appendix = TRUE}
 #| code-summary: "Create a Manhattan plot with the genome-wide p-values for the markers"
 #| label: fig-clean_height_marker_effects_manhattan
-#| fig-cap: "Manhattan plot of the genome-wide p-values for the genetic markers"
+#| fig-cap: "QTL analysis of the plant height: Manhattan plot of the genome-wide p-values for the genetic markers"
 
-marker_pval_df <- anova_all_markers(
-  dta_quant_clean,
+marker_height_pval_df <- anova_all_markers(
+  dta_height_clean,
   dta_owb_genetic_map,
   "Height",
-  colnames(dta_quant_clean)[5:ncol(dta_quant_clean)]
+  colnames(dta_height_clean)[5:ncol(dta_height_clean)]
 )
 
 # Calculate the Bonferroni corrected significance threshold. The Bonferroni
 # correction adjusts the chosen significance level (here 5 %) by dividing it
 # by the number of tests.
-sig_thld_bonfcorr <- 0.05 / nrow(marker_pval_df)
+sig_thld_bonfcorr_height <- 0.05 / nrow(marker_height_pval_df)
 
 # Create a data frame that follows the requirements of the
 # Manhattan command of the qqman library
-marker_pval_manhattan_plot_df <- marker_pval_df |>
+marker_height_pval_manhattan_plot_df <- marker_height_pval_df |>
   dplyr::mutate(CHR = as.numeric(gsub("H", "", chr))) |>
   dplyr::rename(BP = pos) |>
   dplyr::mutate(SNP = 1:n(), .before = pval) |>
@@ -450,8 +452,8 @@ marker_pval_manhattan_plot_df <- marker_pval_df |>
 
 # Manhattan plot of the genome-wide p-values for the markers
 qqman::manhattan(
-  marker_pval_manhattan_plot_df,
-  genomewideline = -log(sig_thld_bonfcorr),
+  marker_height_pval_manhattan_plot_df,
+  genomewideline = -log(sig_thld_bonfcorr_height),
   suggestiveline = FALSE,
   logp = TRUE,
   p = "pval",
@@ -467,8 +469,8 @@ qqman::manhattan(
 
 # Determine all gene positions which have p-value less than the
 # Bonferroni corrected p-value
-marker_pval_sig_df <- marker_pval_df |>
-  dplyr::filter(pval < sig_thld_bonfcorr) |>
+marker_height_pval_sig_df <- marker_height_pval_df |>
+  dplyr::filter(pval < sig_thld_bonfcorr_height) |>
   dplyr::rename(Chr = chr) |>
   dplyr::group_by(Chr) |>
   dplyr::summarise(
@@ -480,7 +482,7 @@ marker_pval_sig_df <- marker_pval_df |>
   )
 
 # Table output
-tbl_clean_height_chr_impacts <- marker_pval_sig_df |>
+tbl_clean_height_chr_impacts <- marker_height_pval_sig_df |>
   gt::gt() |>
   gt::fmt_scientific(
     columns = `Min p-val`,
@@ -512,6 +514,289 @@ tbl_clean_height_chr_impacts
 gt::gtsave(
   tbl_clean_height_chr_impacts,
   filename = "tbl-clean_height_chr_impacts.tex",
+  path = "../results/"
+)
+```
+
+## Analyses on spike length
+
+### Detection of outliers
+
+@fig-raw_aov_spike_len_residuals_cooks_dist shows a Cook's distance plot of the ANOVA residuals, which reveals the rows 14, 174, and 214 as outliers.
+
+```{r appendix = TRUE}
+#| code-summary: "Spike length ~ genotype ANOVA (raw data)"
+#| code-fold: false
+
+# Fit an ANOVA for the Spike length ~ genotype
+spike_len_raw_aov <- aov(Spike.Length ~ Genotype, data = dta_quant_raw)
+```
+
+```{r appendix = TRUE}
+#| code-summary: "Create a Cook's distance plot"
+#| code-fold: false
+#| label: fig-raw_aov_spike_len_residuals_cooks_dist
+#| fig-cap: "Cook's distance plot of the ANOVA residuals. The rows 14, 174, and 214 (in the genotypes OWB33, OWB42, and OWB26) are detected as outliers."
+
+# Cook's distance plot
+plot(spike_len_raw_aov, which = 4, frame = FALSE)
+```
+
+### Cleansing the data
+
+The dectected three outliers are removed because such outliers can severely affect normality and homogeneity of the variance.
+
+```{r appendix = TRUE}
+#| code-summary: "Remove outliers (data cleansing)"
+#| code-fold: false
+
+# Remove outliers
+dta_spike_len_clean <- dta_quant_raw[-c(14, 174, 214), ]
+```
+
+### Spike length comparison for the different genotypes
+
+```{r appendix = TRUE}
+#| code-summary: "Densitiy plot comparing the spike length of the different genotypes"
+#| label: fig-clean_genotype_spike_len
+#| fig-cap: "Spike lengths of the different genotypes"
+
+# Densitiy plot comparing the spike length of the different genotypes
+ggpubr::ggdensity(
+  data = dta_spike_len_clean,
+  x = "Spike.Length",
+  add = "mean",
+  color = "Genotype",
+  fill = "Genotype",
+  xlab = "Spike length in cm",
+  ylab = "Density",
+) +
+  ggplot2::theme(legend.justification = c("left", "top")) +
+  ggplot2::guides(
+    colour = ggplot2::guide_legend(
+      title.position = "top",
+      nrow = 6,
+      byrow = TRUE
+    )
+  )
+```
+
+::: {.callout-note collapse="true" appearance="minimal"}
+### Summary statistics per genotype
+
+```{r appendix = TRUE}
+#| code-summary: "Summary statistics per genotype"
+#| label: tbl-clean_genotype_spike_len
+#| tbl-cap: "Spike lengths of the different genotypes"
+
+# Summary statistics per genotype
+tbl_clean_genotype_spike_len <- dta_spike_len_clean |>
+  dplyr::select(Genotype, Spike.Length) |>
+  dplyr::group_by(Genotype) |>
+  dplyr::summarise(
+    Count = n(),
+    Mean = mean(Spike.Length),
+    Sd = sd(Spike.Length)
+  ) |>
+  dplyr::arrange(Mean) |>
+  gt::gt() |>
+  gt::fmt_number(
+    columns = Mean,
+    decimals = 1
+  ) |>
+  gt::fmt_number(
+    columns = Sd,
+    decimals = 2
+  ) |>
+  gt::opt_stylize() |>
+  gt::tab_options(
+    table.align = "left"
+  )
+tbl_clean_genotype_spike_len
+```
+
+```{r appendix = TRUE}
+#| code-summary: "Save table tbl-clean_genotype_spike_len"
+
+# Save table tbl-clean_genotype_spike_len
+gt::gtsave(
+  tbl_clean_genotype_spike_len,
+  filename = "tbl-clean_genotype_spike_len.tex",
+  path = "../results/"
+)
+```
+:::
+
+### ANOVA spike length \~ genotype
+
+The spike length \~ genotype ANOVA reveals that the genotype has a significant effect on the spike length (p-value \< $2 \times 10^{-16}$).
+
+```{r appendix = TRUE}
+#| code-summary: "Spike length ~ genotype ANOVA (cleansed data)"
+#| code-fold: false
+
+# Fit an ANOVA for the spike length ~ genotype
+spike_len_clean_aov <- aov(Spike.Length ~ Genotype, data = dta_spike_len_clean)
+
+# Summary of the ANOVA analysis
+summary(spike_len_clean_aov)
+```
+
+### Test for homogeneity
+
+ANOVA assumes that the data are normally distributed and that the variance across the groups is approximately equal.
+
+@fig-clean_aov_spike_len_residuals_vs_fit shows a plot of the ANOVA residuals vs fitted values. This plot and the p-value of 0.20 for the Levene's test indicate that the variances within the groups are not significantly different from each other, i.e., the homogeneity assumption of the variance is met.
+
+```{r appendix = TRUE}
+#| code-summary: "Plot the ANOVA residuals vs fit in order to check the homogeneity of variance assumption"
+#| code-fold: false
+#| label: fig-clean_aov_spike_len_residuals_vs_fit
+#| fig-cap: "ANOVA residuals"
+#| out.width: "75%"
+
+# Plot the ANOVA residuals vs fit in order to check the homogeneity
+# of variance assumption
+plot(spike_len_clean_aov, which = 1, frame = FALSE)
+```
+
+```{r appendix = TRUE}
+#| code-summary: "Levene's test for homogeneity of variance across groups"
+#| code-fold: false
+#| output: false
+
+# Levene's test for homogeneity of variance across groups
+car::leveneTest(Spike.Length ~ Genotype, data = dta_spike_len_clean)
+```
+
+### Test for normality
+
+According to the Shapiro-Wilk test for normality, it is unlikely that the cleansed data is normally distributed (p-value = $2.8 \times 10^{-4}$). Nevertheless, the histogram (@fig-clean_aov_spike_len_residuals_histogram) and the Q-Q plot (@fig-clean_aov_spike_len_residuals_qq) of the ANOVA residuals show that the data conform at least roughly to a normal distribution.
+
+```{r appendix = TRUE}
+#| code-summary: "Plot a histogram of the ANOVA residuals"
+#| code-fold: false
+#| label: fig-clean_aov_spike_len_residuals_histogram
+#| fig-cap: "Density plot of the ANOVA residuals"
+#| out.width: "75%"
+
+# Plot a density histogram of the ANOVA residuals
+plot(density(spike_len_clean_aov$residuals), frame = FALSE)
+```
+
+```{r appendix = TRUE}
+#| code-summary: "Create a Q-Q plot of the ANOVA residuals"
+#| code-fold: false
+#| label: fig-clean_aov_spike_len_residuals_qq
+#| fig-cap: "Q-Q plot of the ANOVA residuals"
+#| out.width: "75%"
+
+# Q-Q plot of the ANOVA residuals
+plot(spike_len_clean_aov, which = 2, frame = FALSE)
+```
+
+```{r appendix = TRUE}
+#| code-summary: "Shapiro-Wilk test for normality"
+#| code-fold: false
+#| output: false
+
+# Shapiro-Wilk test for normality
+shapiro.test(spike_len_clean_aov$residuals)
+```
+
+### QTL analysis
+
+@fig-clean_spike_len_marker_effects_manhattan and @tbl-clean_spike_len_chr_impacts show that the spike length is mainly significantly effected by a genomic region within gene 2H. But there are also markers within the genes 3H and 7H which have a significant impact on the spike length.
+
+```{r appendix = TRUE}
+#| code-summary: "Create a Manhattan plot with the genome-wide p-values for the markers"
+#| label: fig-clean_spike_len_marker_effects_manhattan
+#| fig-cap: "QTL analysis of the spike length: Manhattan plot of the genome-wide p-values for the genetic markers"
+
+marker_spike_len_pval_df <- anova_all_markers(
+  dta_spike_len_clean,
+  dta_owb_genetic_map,
+  "Spike.Length",
+  colnames(dta_spike_len_clean)[5:ncol(dta_spike_len_clean)]
+)
+
+# Calculate the Bonferroni corrected significance threshold. The Bonferroni
+# correction adjusts the chosen significance level (here 5 %) by dividing it
+# by the number of tests.
+sig_thld_bonfcorr_spike_len <- 0.05 / nrow(marker_spike_len_pval_df)
+
+# Create a data frame that follows the requirements of the
+# Manhattan command of the qqman library
+marker_spike_len_pval_manhattan_plot_df <- marker_spike_len_pval_df |>
+  dplyr::mutate(CHR = as.numeric(gsub("H", "", chr))) |>
+  dplyr::rename(BP = pos) |>
+  dplyr::mutate(SNP = 1:n(), .before = pval) |>
+  dplyr::select(CHR, BP, SNP, pval)
+
+# Manhattan plot of the genome-wide p-values for the markers
+qqman::manhattan(
+  marker_spike_len_pval_manhattan_plot_df,
+  genomewideline = -log(sig_thld_bonfcorr_spike_len),
+  suggestiveline = FALSE,
+  logp = TRUE,
+  p = "pval",
+  lwd = 3,
+  ylab = "p-value (neg. log)"
+)
+```
+
+```{r appendix = TRUE}
+#| code-summary: "Determine all gene positions which have p-value less than the Bonferroni corrected p-value"
+#| label: tbl-clean_spike_len_chr_impacts
+#| tbl-cap: "Impact of the chromosomes on the spike length"
+
+# Determine all gene positions which have p-value less than the
+# Bonferroni corrected p-value
+marker_spike_len_pval_sig_df <- marker_spike_len_pval_df |>
+  dplyr::filter(pval < sig_thld_bonfcorr_spike_len) |>
+  dplyr::rename(Chr = chr) |>
+  dplyr::group_by(Chr) |>
+  dplyr::summarise(
+    Count = n(),
+    "Min p-val" = min(pval),
+    "Median p-val" = median(pval),
+    "Min pos" = min(pos),
+    "Max pos" = max(pos)
+  )
+
+# Table output
+tbl_clean_spike_len_chr_impacts <- marker_spike_len_pval_sig_df |>
+  gt::gt() |>
+  gt::fmt_scientific(
+    columns = `Min p-val`,
+    n_sigfig = 2
+  ) |>
+  gt::fmt_scientific(
+    columns = `Median p-val`,
+    n_sigfig = 2
+  ) |>
+  gt::fmt_number(
+    columns = `Min pos`,
+    decimals = 1
+  ) |>
+  gt::fmt_number(
+    columns = `Max pos`,
+    decimals = 1
+  ) |>
+  gt::opt_stylize() |>
+  gt::tab_options(
+    table.align = "left"
+  )
+tbl_clean_spike_len_chr_impacts
+```
+
+```{r appendix = TRUE}
+#| code-summary: "Save table tbl-clean_spike_len_chr_impacts"
+
+# Save table tbl-clean_height_chr_impacts
+gt::gtsave(
+  tbl_clean_spike_len_chr_impacts,
+  filename = "tbl-clean_spike_len_chr_impacts.tex",
   path = "../results/"
 )
 ```
