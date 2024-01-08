@@ -831,9 +831,9 @@ The following qualitative traits are mapped to the genetic marker with the close
 
 -   leaf variegation
 
-**Findings:** The leaf variegation of the Oregon Wolfe barley collection is significantly effected by the chromosome 2H at position 192.8. According to @giménez2021, the leaf variegation is controlled by the gene *Wst*. @fig-gimenez2021-molecular-marker-locations shows their phenotypic trait mapping results, which are in accordance with these findings.
+To this end, the LOD scores of these traits are determined for all possible positions. Afterwards the respective trait markers are moved to the loci with the highest associated LOD scores. @tbl-lod_scores_qualt_phenotypes and @fig-link_map_qualt_traits show the resulting linkage mappings of the traits.
 
-@tbl-lod_scores_qualt_phenotypes and @fig-link_map_qualt_traits show the linkage mappings of the qualitative traits.
+**Findings:** The leaf variegation of the Oregon Wolfe barley collection is significantly effected by the chromosome 2H at position 192.8. According to @giménez2021, the leaf variegation is controlled by the gene *Wst*. @fig-gimenez2021-molecular-marker-locations shows their phenotypic trait mapping results, which are in accordance with these findings.
 
 ## Function definitions
 
