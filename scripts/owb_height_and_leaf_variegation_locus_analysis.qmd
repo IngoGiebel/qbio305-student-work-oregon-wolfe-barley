@@ -149,7 +149,8 @@ options(pillar.sigfig = 4)
 ## Determine the file paths of the raw data
 
 ```{r appendix = TRUE}
-#| code-summary: "Determine the file paths of the raw data relative to the project's base directory"
+#| code-summary: "Determine the file paths of the raw data relative to the
+#| project's base directory"
 #| output: false
 
 dta_owb_genetic_map_file_path <- here::here(
@@ -171,7 +172,8 @@ dta_owb_linkage_map_qualt_phenotypes_file_path <- here::here(
 ## Read in the raw data
 
 ```{r appendix = TRUE}
-#| code-summary: "Read in the raw data: the quantitative data of the different OWB genotypes, the genetic map of OWB, and the qualitative phenotypes data"
+#| code-summary: "Read in the raw data: the quantitative data of the different
+#| OWB genotypes, the genetic map of OWB, and the qualitative phenotypes data"
 #| output: false
 
 # Read in the raw quantitative data of the different OWB genotypes
@@ -201,7 +203,8 @@ dta_linkage_map_qualt_phenotypes <- qtl::read.cross(
 ## Function definitions
 
 ```{r appendix = TRUE}
-#| code-summary: "Function for conducting a phenotype ~ marker ANOVA for each marker within a given list of markers"
+#| code-summary: "Function for conducting a phenotype ~ marker ANOVA for
+#| each marker within a given list of markers"
 
 # Conduct an ANOVA of phenotype ~ marker for each marker within marker_names
 anova_all_markers <- function(data, genetic_map, phenotype, marker_names) {
@@ -220,7 +223,7 @@ anova_all_markers <- function(data, genetic_map, phenotype, marker_names) {
     marker_chr_pos <- dplyr::filter(genetic_map, marker == marker_name)
     # Conduct an one-way ANOVA of the phenotype vs the marker
     marker_aov <- aov(
-      as.formula(paste(phenotype, "~", marker_name)),
+      glue::glue({phenotype} ~ {marker_name}),
       data = data
     )
     # Extract the marker's p-value from the ANOVA table
@@ -253,7 +256,8 @@ height_raw_aov <- aov(Height ~ Genotype, data = dta_quant_raw)
 #| code-summary: "Create a Cook's distance plot"
 #| code-fold: false
 #| label: fig-raw_aov_height_residuals_cooks_dist
-#| fig-cap: "Cook's distance plot of the ANOVA residuals. The rows 14, 40, and 182 (in the genotypes OWB33, OWB76, and OWB54) are detected as outliers."
+#| fig-cap: "Cook's distance plot of the ANOVA residuals. The rows 14, 40, and
+#| 182 (in the genotypes OWB33, OWB76, and OWB54) are detected as outliers."
 
 # Cook's distance plot
 plot(height_raw_aov, which = 4, frame = FALSE)
@@ -366,7 +370,8 @@ ANOVA assumes that the data are normally distributed and that the variance acros
 @fig-clean_aov_height_residuals_vs_fit shows a plot of the ANOVA residuals vs fitted values. This plot and the p-value of 0.52 for the Levene's test indicate that the variances within the groups are not significantly different from each other, i.e., the homogeneity assumption of the variance is met.
 
 ```{r appendix = TRUE}
-#| code-summary: "Plot the ANOVA residuals vs fit in order to check the homogeneity of variance assumption"
+#| code-summary: "Plot the ANOVA residuals vs fit in order to check the
+#| homogeneity of variance assumption"
 #| code-fold: false
 #| label: fig-clean_aov_height_residuals_vs_fit
 #| fig-cap: "ANOVA residuals"
@@ -426,9 +431,11 @@ shapiro.test(height_clean_aov$residuals)
 @fig-clean_height_marker_effects_manhattan and @tbl-clean_height_chr_impacts show that the plant height is mainly significantly effected by a genomic region within gene 2H. But there are also markers within the genes 1H, 3H, 5H, and 6H which have a significant impact on the plant height.
 
 ```{r appendix = TRUE}
-#| code-summary: "Create a Manhattan plot with the genome-wide p-values for the markers"
+#| code-summary: "Create a Manhattan plot with the genome-wide p-values
+#| for the markers"
 #| label: fig-clean_height_marker_effects_manhattan
-#| fig-cap: "QTL analysis of the plant height: Manhattan plot of the genome-wide p-values for the genetic markers"
+#| fig-cap: "QTL analysis of the plant height: Manhattan plot of the
+#| genome-wide p-values for the genetic markers"
 
 marker_height_pval_df <- anova_all_markers(
   dta_height_clean,
@@ -447,7 +454,7 @@ sig_thld_bonfcorr_height <- 0.05 / nrow(marker_height_pval_df)
 marker_height_pval_manhattan_plot_df <- marker_height_pval_df |>
   dplyr::mutate(CHR = as.numeric(gsub("H", "", chr))) |>
   dplyr::rename(BP = pos) |>
-  dplyr::mutate(SNP = 1:n(), .before = pval) |>
+  dplyr::mutate(SNP = seq_len(n()), .before = pval) |>
   dplyr::select(CHR, BP, SNP, pval)
 
 # Manhattan plot of the genome-wide p-values for the markers
@@ -463,7 +470,8 @@ qqman::manhattan(
 ```
 
 ```{r appendix = TRUE}
-#| code-summary: "Determine all gene positions which have p-value less than the Bonferroni corrected p-value"
+#| code-summary: "Determine all gene positions which have p-value less than
+#| the Bonferroni corrected p-value"
 #| label: tbl-clean_height_chr_impacts
 #| tbl-cap: "Impact of the chromosomes on the plant height"
 
@@ -536,7 +544,8 @@ spike_len_raw_aov <- aov(Spike.Length ~ Genotype, data = dta_quant_raw)
 #| code-summary: "Create a Cook's distance plot"
 #| code-fold: false
 #| label: fig-raw_aov_spike_len_residuals_cooks_dist
-#| fig-cap: "Cook's distance plot of the ANOVA residuals. The rows 14, 174, and 214 (in the genotypes OWB33, OWB42, and OWB26) are detected as outliers."
+#| fig-cap: "Cook's distance plot of the ANOVA residuals. The rows 14, 174, and
+#| 214 (in the genotypes OWB33, OWB42, and OWB26) are detected as outliers."
 
 # Cook's distance plot
 plot(spike_len_raw_aov, which = 4, frame = FALSE)
@@ -557,7 +566,8 @@ dta_spike_len_clean <- dta_quant_raw[-c(14, 174, 214), ]
 ### Spike length comparison for the different genotypes
 
 ```{r appendix = TRUE}
-#| code-summary: "Densitiy plot comparing the spike length of the different genotypes"
+#| code-summary: "Densitiy plot comparing the spike length of the
+#| different genotypes"
 #| label: fig-clean_genotype_spike_len
 #| fig-cap: "Spike lengths of the different genotypes"
 
@@ -649,7 +659,8 @@ ANOVA assumes that the data are normally distributed and that the variance acros
 @fig-clean_aov_spike_len_residuals_vs_fit shows a plot of the ANOVA residuals vs fitted values. This plot and the p-value of 0.20 for the Levene's test indicate that the variances within the groups are not significantly different from each other, i.e., the homogeneity assumption of the variance is met.
 
 ```{r appendix = TRUE}
-#| code-summary: "Plot the ANOVA residuals vs fit in order to check the homogeneity of variance assumption"
+#| code-summary: "Plot the ANOVA residuals vs fit in order to check the
+#| homogeneity of variance assumption"
 #| code-fold: false
 #| label: fig-clean_aov_spike_len_residuals_vs_fit
 #| fig-cap: "ANOVA residuals"
@@ -709,9 +720,11 @@ shapiro.test(spike_len_clean_aov$residuals)
 @fig-clean_spike_len_marker_effects_manhattan and @tbl-clean_spike_len_chr_impacts show that the spike length is mainly significantly effected by a genomic region within gene 2H. But there are also markers within the genes 3H and 7H which have a significant impact on the spike length.
 
 ```{r appendix = TRUE}
-#| code-summary: "Create a Manhattan plot with the genome-wide p-values for the markers"
+#| code-summary: "Create a Manhattan plot with the genome-wide p-values
+#| for the markers"
 #| label: fig-clean_spike_len_marker_effects_manhattan
-#| fig-cap: "QTL analysis of the spike length: Manhattan plot of the genome-wide p-values for the genetic markers"
+#| fig-cap: "QTL analysis of the spike length: Manhattan plot of the
+#| genome-wide p-values for the genetic markers"
 
 marker_spike_len_pval_df <- anova_all_markers(
   dta_spike_len_clean,
@@ -730,7 +743,7 @@ sig_thld_bonfcorr_spike_len <- 0.05 / nrow(marker_spike_len_pval_df)
 marker_spike_len_pval_manhattan_plot_df <- marker_spike_len_pval_df |>
   dplyr::mutate(CHR = as.numeric(gsub("H", "", chr))) |>
   dplyr::rename(BP = pos) |>
-  dplyr::mutate(SNP = 1:n(), .before = pval) |>
+  dplyr::mutate(SNP = seq_len(n()), .before = pval) |>
   dplyr::select(CHR, BP, SNP, pval)
 
 # Manhattan plot of the genome-wide p-values for the markers
@@ -746,7 +759,8 @@ qqman::manhattan(
 ```
 
 ```{r appendix = TRUE}
-#| code-summary: "Determine all gene positions which have p-value less than the Bonferroni corrected p-value"
+#| code-summary: "Determine all gene positions which have p-value less than
+#| the Bonferroni corrected p-value"
 #| label: tbl-clean_spike_len_chr_impacts
 #| tbl-cap: "Impact of the chromosomes on the spike length"
 
@@ -824,7 +838,8 @@ The following qualitative traits are mapped to the genetic marker with the close
 ## Function definitions
 
 ```{r appendix = TRUE}
-#| code-summary: "Functions for determining the LOD scores of a given phenotypic marker and for locus mapping"
+#| code-summary: "Functions for determining the LOD scores of a given
+#| phenotypic marker and for locus mapping"
 
 # Determine the LOD scores of the given marker for all possible positions
 calc_lod_scores <- function(linkage_map, phenotype) {
@@ -861,11 +876,14 @@ qualt_markers <- c(
   "awn_length",
   "2vs6row",
   "naked_seed",
-  "leaf_variegation")
+  "leaf_variegation"
+)
 ```
 
 ```{r appendix = TRUE}
-#| code-summary: "For all qualitative traits: Determine the LOD scores of the trait for all possible positions and map the respective trait marker to the locus that is most likely responsible for the trait"
+#| code-summary: "For all qualitative traits: Determine the LOD scores of the
+#| trait for all possible positions and map the respective trait marker to the
+#| locus that is most likely responsible for the trait"
 
 # Tibble for the traits and most likely chromosome positions
 lod_scores_all_traits_df <- tibble::tibble(
@@ -912,9 +930,12 @@ for (qualt_marker in qualt_markers) {
 ```
 
 ```{r appendix = TRUE}
-#| code-summary: "Print a presentation table of the linkage mappings and highest LOD scores for each of the qualitative traits"
+#| code-summary: "Print a presentation table of the linkage mappings and
+#| highest LOD scores for each of the qualitative traits"
 #| label: tbl-lod_scores_qualt_phenotypes
-#| tbl-cap: "Linkage mappings and highest LOD scores of the qualitative traits seed color, hooded vs. normal florets, long vs. short awns, two-row vs. six-row, hulled vs. naked seeds, and leaf variegation"
+#| tbl-cap: "Linkage mappings and highest LOD scores of the qualitative traits
+#| seed color, hooded vs. normal florets, long vs. short awns,
+#| two-row vs. six-row, hulled vs. naked seeds, and leaf variegation"
 
 tbl_lod_scores_qualt_phenotypes <- lod_scores_all_traits_df |>
   dplyr::group_by(Chr) |>
@@ -953,7 +974,9 @@ gt::gtsave(
 ```{r appendix = TRUE}
 #| code-summary: "Plot the updated linkage map"
 #| label: fig-link_map_qualt_traits
-#| fig-cap: "Genetic linkage mappings of the qualitative traits seed color, hooded vs. normal florets, long vs. short awns, two-row vs. six-row, hulled vs. naked seeds, and leaf variegation"
+#| fig-cap: "Genetic linkage mappings of the qualitative traits seed color,
+#| hooded vs. normal florets, long vs. short awns, two-row vs. six-row,
+#| hulled vs. naked seeds, and leaf variegation"
 
 # Plot the updated linkage map
 qtl::plotMap(
